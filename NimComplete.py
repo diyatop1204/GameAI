@@ -149,11 +149,11 @@ def Nim_main():
         #When actual game is over, checks who was the last to take a stick out and won the game
         if is_game_over(state, get_valid_moves, winner, current_player): 
             print_state()
-            # The player who takes the last stick loses.
+            # Theis player who takes the last stick loses.
             if winner(state, current_player) == 1:
-                print("\nNo sticks left. You lose")
-            else:
                 print("\nNo sticks left. You win")
+            else:
+                print("\nNo sticks left. You lose")
             break
         
         #Printing out the Move time summary
