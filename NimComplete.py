@@ -66,6 +66,24 @@ def winner(current_state, player):
             return +1
     return 0
 
+def evaluate(current_state, player):
+
+    if all(row == 0 for row in current_state):
+        if player == MAX_PLAYER: #If current playyer is the AI when there are already no sticks left, AI wins
+            return 1
+        else:
+            return -1
+
+    #For when player is not in a terminal state: Based on solved theory of NIM, A xor(Nim Sum) of 0 means whoever the current player is in a losing position
+    nim_sum = 0
+    for row in current_state:
+        nim_sum ^= row
+
+    if nim_sum != 0:
+        return 1
+    else:
+        return -1
+    
 def is_game_over(current_state, get_valid_moves, winner, player): #Checks if the game is over
     """Game is over when every row is empty."""
     return all(row == 0 for row in current_state)
@@ -147,10 +165,10 @@ def Nim_main():
             current_player = MAX_PLAYER
 
         #When actual game is over, checks who was the last to take a stick out and won the game
-        if is_game_over(state, get_valid_moves, winner, current_player): 
+        if is_game_over(state, get_valid_moves, evaluate, current_player):
             print_state()
             # The player who takes the last stick loses.
-            if winner(state, current_player) == 1:
+            if current_player == MAX_PLAYER:
                 print("\nNo sticks left. You lose")
             else:
                 print("\nNo sticks left. You win")
