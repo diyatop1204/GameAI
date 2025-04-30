@@ -29,39 +29,41 @@ def print_state(current_state=None):
         print(f"{i}  {' '.join(row)}")
     print()
 
-def get_valid_moves(current_state):
-    """Generates a list of valid moves for the current player."""
+def get_valid_moves(current_state, player=None):
+    """Generates a list of valid moves for the current player (either 'T' or 'D')."""
     moves = []
-    
-    # For tiger player
-    tiger_position = find_tiger(current_state)
-    
-    # For dog player
-    dog_position = find_dogs(current_state)
 
-    if tiger_position:  # Tiger's turn
-        r, c = tiger_position
-        # 8 directions (orthogonal and diagonal)
-        directions = [(-1, 0), (1, 0), (0, -1), (0, 1), (-1, -1), (-1, 1), (1, -1), (1, 1)]
-        for dr, dc in directions:
-            nr, nc = r + dr, c + dc
-            if 0 <= nr < 5 and 0 <= nc < 5 and current_state[nr][nc] == '.':
-                moves.append(((r, c), (nr, nc)))  # Store as tuples of coordinates
-    
-    elif dog_position:  # Dog's turn
-        # Only orthogonal moves for dogs (no diagonal movement)
-        directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
-        for r in range(5):
-            for c in range(5):
-                if current_state[r][c] == 'D':
-                    for dr, dc in directions:
-                        nr, nc = r + dr, c + dc
-                        if 0 <= nr < 5 and 0 <= nc < 5 and current_state[nr][nc] == '.':
-                            moves.append(((r, c), (nr, nc)))  # Store as tuples of coordinates
-    else: 
-        moves = None
+    # Infer the player if it's not given
+    if player is None:
+        # Count T and D to guess whose turn it is
+        flat = sum(current_state, [])  # Flatten the board
+        tiger_count = flat.count('T')
+        dog_count = flat.count('D')
+
+        # Basic heuristic: if dogs > tigers, it's dog's turn
+        player = 'D' if dog_count > tiger_count else 'T'
+
+    if player == 'T':  # Tiger's turn
+        tiger_position = find_tiger(current_state)
+        if tiger_position:
+            r, c = tiger_position
+            directions = [(-1, 0), (1, 0), (0, -1), (0, 1),
+                          (-1, -1), (-1, 1), (1, -1), (1, 1)]
+            for dr, dc in directions:
+                nr, nc = r + dr, c + dc
+                if 0 <= nr < 5 and 0 <= nc < 5 and current_state[nr][nc] == '.':
+                    moves.append(((r, c), (nr, nc)))
+
+    elif player == 'D':  # Dog's turn
+        dog_position = find_dogs(current_state)
+        for r, c in dog_position:
+            directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+            for dr, dc in directions:
+                nr, nc = r + dr, c + dc
+                if 0 <= nr < 5 and 0 <= nc < 5 and current_state[nr][nc] == '.':
+                    moves.append(((r, c), (nr, nc)))
+
     return moves
-
 
 def evaluate(current_state, player):
     """Evaluates the game state from the perspective of the current player."""
@@ -156,11 +158,12 @@ def is_game_over(current_state, *args):
 
 def get_user_move(current_state, user_choice):
     """Prompts the user for a valid move and returns the move as a tuple (start_row, start_col, end_row, end_col)."""
-    valid_moves = get_valid_moves(current_state)
+    valid_moves = get_valid_moves(current_state, user_choice) 
     if user_choice == 'T':
         print("Available Tiger moves:")
     else:
         print("Available Dog moves:")
+    
     for i, move in enumerate(valid_moves):
         print(f"{i+1}: {user_choice} at ({move[0][0]},{move[0][1]}) to ({move[1][0]},{move[1][1]})")
 
@@ -208,7 +211,7 @@ def tiger_max_value(current_state, depth, alpha, beta):
         return evaluate(current_state, MAX_PLAYER)
 
     max_eval = -float('inf')
-    for move in get_valid_moves(current_state):
+    for move in get_valid_moves(current_state, 'T'):
         next_state = make_move(copy.deepcopy(current_state), move[0], move[1], MAX_PLAYER)
         eval_score = tiger_min_value(next_state, depth - 1, alpha, beta)
         max_eval = max(max_eval, eval_score)
@@ -284,7 +287,7 @@ def tiger_min_value(current_state, depth, alpha, beta):
         return evaluate(current_state, MIN_PLAYER)
 
     min_eval = float('inf')
-    for move in get_valid_moves(current_state):
+    for move in get_valid_moves(current_state, 'T'):
         next_state = make_move(copy.deepcopy(current_state), move[0], move[1], MIN_PLAYER)
         eval_score = tiger_max_value(next_state, depth - 1, alpha, beta)
         min_eval = min(min_eval, eval_score)
@@ -311,7 +314,7 @@ def dog_min_value(current_state, depth, alpha, beta):
     return min_eval
 
 def find_tiger_best_move(current_state):
-    valid_moves = get_valid_moves(current_state)
+    valid_moves = get_valid_moves(current_state, 'T')
     print("Valid moves:\n", valid_moves)  # Debugging line to check the moves list
 
     if valid_moves:
@@ -414,5 +417,17 @@ def Tiger_vs_Dogs_main():
     winner = "Tiger" if evaluate(state, MAX_PLAYER) > 0 else "Dogs"
     print(f"Game Over! {winner} wins!")
 
+def get_move_input():
+    while True:
+        user_input = input("Enter your move as 'start_row,start_col end_row,end_col': ")
+        try:
+            parts = user_input.strip().split()
+            start = tuple(map(int, parts[0].split(',')))
+            end = tuple(map(int, parts[1].split(',')))
+            return (start, end)
+        except (ValueError, IndexError):
+            print("Invalid format. Please enter your move like: '1,2 1,3'")
+
 if __name__ == "__main__":
     Tiger_vs_Dogs_main()
+
