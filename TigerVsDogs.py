@@ -110,17 +110,8 @@ def make_move(current_state, start_pos, end_pos, player):
     new_state[start_row][start_col] = '.'
     new_state[end_row][end_col] = piece
 
-    # If it's the tiger's move, check for captures
-    if piece == 'T':
-        # Check in all 8 directions for potential captures
-        directions = [(-1, 0), (1, 0), (0, -1), (0, 1),
-                      (-1, -1), (-1, 1), (1, -1), (1, 1)]
-        for dr, dc in directions:
-            mid_r, mid_c = (start_row + end_row) // 2, (start_col + end_col) // 2
-            if (end_row - start_row == 2 * dr or end_row - start_row == -2 * dr) and \
-               (end_col - start_col == 2 * dc or end_col - start_col == -2 * dc):
-                if 0 <= mid_r < 5 and 0 <= mid_c < 5 and new_state[mid_r][mid_c] == 'D':
-                    new_state[mid_r][mid_c] = '.'  # Capture the dog
+    if player == 'T': # removing dogs if its player T
+        remove_adjacent_dogs_if_surrounded(new_state, end_row, end_col)
     
     elif piece == 'D': # Dog's move
         directions = [(-1, 0), (1, 0), (0, -1), (0, 1),
@@ -200,6 +191,40 @@ def count_captured_dogs(initial_state, current_state):
     initial_dogs = sum(row.count('D') for row in initial_state)
     current_dogs = sum(row.count('D') for row in current_state)
     return initial_dogs - current_dogs
+
+def remove_adjacent_dogs_if_surrounded(new_state, end_row, end_col):
+    """Removes adjacent dogs in a straight line if they meet the condition."""
+    directions = [
+        (0, 1),   # Horizontal 
+        (1, 0),   # Vertical 
+        (1, 1),   # Diagonal 
+        (1, -1)   # Diagonal 
+    ]
+
+    for dr, dc in directions:
+        # Get positions left and right of the tiger in that direction
+        pos1 = (end_row - dr, end_col - dc)
+        pos2 = (end_row + dr, end_col + dc)
+
+        if all(0 <= r < 5 and 0 <= c < 5 for r, c in [pos1, pos2]):
+            r1, c1 = pos1
+            r2, c2 = pos2
+
+            # Check if both are dogs
+            if new_state[r1][c1] == 'D' and new_state[r2][c2] == 'D':
+                # Check that those dogs have no neighbors along the same line
+                r1_next, c1_next = r1 - dr, c1 - dc
+                r2_next, c2_next = r2 + dr, c2 + dc
+
+                r1_valid = 0 <= r1_next < 5 and 0 <= c1_next < 5
+                r2_valid = 0 <= r2_next < 5 and 0 <= c2_next < 5
+
+                r1_isolated = not (r1_valid and new_state[r1_next][c1_next] == 'D')
+                r2_isolated = not (r2_valid and new_state[r2_next][c2_next] == 'D')
+
+                if r1_isolated and r2_isolated:
+                    new_state[r1][c1] = '.'
+                    new_state[r2][c2] = '.'
 
 # Modified minimax functions specifically for Tiger vs Dogs
 def tiger_max_value(current_state, depth, alpha, beta):
@@ -430,4 +455,3 @@ def get_move_input():
 
 if __name__ == "__main__":
     Tiger_vs_Dogs_main()
-
