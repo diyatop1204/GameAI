@@ -13,14 +13,15 @@ def initialize_state():
     """Initializes the game state (board) to empty."""
     global state
     num_rows = 4
-    state = [2 * i + 1 for i in range(num_rows)]
+    state = []
 
 def print_state():
     max_length = max(state) 
     print("\nCurrent Pyramid:")
-    for row in state:
+    for i in range(len(state)):
+        row = state[i] #Equivalent of number of rows
         space = (max_length - row) // 2
-        print(' ' * space + '|' * row)
+        print( str(i) + ' ' * space + '|' * row)
 
 # 2. Move Generation Function
 def get_valid_moves(current_state):
@@ -31,7 +32,7 @@ def get_valid_moves(current_state):
         # If the row is not empty, then generate moves
         sticks =  current_state[i] #Note: Checking if there are still sticks in the row
         if sticks > 0:
-            # k is the number of chips to remove (from 1 up to the full row length)
+            # k is the number of sticks to remove (from 1 up to the full row length)
             for k in range(1, sticks + 1):
                 valid_moves.append((i, k))
     return valid_moves
@@ -49,9 +50,7 @@ def make_move(current_state, row, k, player):
     # Remove the first k chips from new_state[row]
     new_state[row] = new_state[row] - k
     return new_state
-    """if is_valid_move(current_state, row, k):
-        move = row, k 
-        current_state[move] = player"""
+ 
 
 # 3. Evaluation Function
 def evaluate(current_state, player):
@@ -82,6 +81,7 @@ def Nim_main():
 
     global state
     initialize_state()
+    num_sticks = 0
     current_player = MAX_PLAYER  # MAX starts first
 
     print("Welcome to Nim vs Computer (Minimax with Alpha-Beta Pruning)! ")
@@ -90,10 +90,22 @@ def Nim_main():
     #Note: Get number of rows of sticks
     try:
         num_rows = int(input("Enter the number of rows of sticks "))
+
     except ValueError:
         print("Invalid input, defaulting to 4 rows.")
         num_rows = 4
-    state = [2 * i + 1 for i in range(num_rows)]
+
+    #Note: Get number of sticks in a row
+    for i in range(num_rows):
+        try:
+            num_sticks = int(input(f"Enter the number of sticks in row {i}  "))
+            state.append(num_sticks)
+
+        except ValueError:
+            print("Invalid input, defaulting to increments of 2 in each row.")
+            num_rows = 4
+            state = [2 * i + 1 for i in range(num_rows)]    
+
 
 
     while True:
