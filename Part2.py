@@ -11,7 +11,7 @@ if __name__ == "__main__":
 
     while True:
         try:
-            game_input = input("Which Game would you like to play? TicTacToe = 1, Nim = 2, Tiger vs Dogs = 3 ")
+            game_input = input("Which Game would you like to play? TicTacToe = 1, Nim = 2, Tiger vs Dogs = 3, Connect 4 = 4")
             game = int(game_input)
             if game < 1:
                 print("Invalid game selection - TicTacToe = 1, Nim = 2, Tiger vs Dogs = 3 ")
@@ -81,10 +81,10 @@ if __name__ == "__main__":
 
 
     if game == 4: 
-        print("Setting up Tiger vs Dogs")
+        print("Setting Connect 4")
         while True: 
             try:
-                print("Starting Tiger vs Dogs with Alpha Beta Pruning")
+                print("Starting Connect 4 with Alpha Beta Pruning")
                 c4.connect4_main()
                 break
             except Exception as e:

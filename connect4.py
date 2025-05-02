@@ -1,8 +1,9 @@
 from minimax import *
 import time
 
+# 6 rows and 7 columns
 # 1. Game State Representation: 2D list
-state = [[' ' for _ in range(5)] for _ in range(6)]
+state = [[' ' for _ in range(7)] for _ in range(6)]
 MAX_PLAYER = 'Y'
 MIN_PLAYER = 'R'
 EMPTY_CELL = ' '
@@ -12,31 +13,31 @@ move_times=[] #Initialise the count
 def initialize_state():
     """Initializes the game state (board) to empty."""
     global state
-    state = [[' ' for _ in range(5)] for _ in range(6)]
+    state = [[' ' for _ in range(7)] for _ in range(6)]
 
 def print_state():
     """Prints the current game state (board) to the console."""
-    print("-----------")
+    print("----------------------------")
     for i in range(6):
         print("| ", end="")
         for j in range(7):
             print(state[i][j] + " | ", end="")
         print()
-        print("-----------")
+        print("----------------------------")
 
 # 2. Move Generation Function
 def get_valid_moves(current_state):
     """Returns a list of valid moves (empty cell coordinates) in the current state."""
     valid_moves = []
-    for i in range(5):
-        for j in range(6):
+    for i in range(6):
+        for j in range(7):
             if current_state[i][j] == EMPTY_CELL:
                 valid_moves.append([i, j])
     return valid_moves
 
 def is_valid_move(current_state, row, col):
     """Checks if a move (row, col) is valid in the current state."""
-    return 0 <= row < 5 and 0 <= col < 6 and current_state[row][col] == EMPTY_CELL
+    return 0 <= row < 6 and 0 <= col < 7 and current_state[row][col] == EMPTY_CELL
 
 def make_move(current_state, row, col, player):
     """Makes a move on the state if it is valid."""
@@ -47,9 +48,7 @@ def make_move(current_state, row, col, player):
 
 # 3. Evaluation Function
 def evaluate(current_state, player):
-    """
-    Dynamic evaluation function for (m, n, k)-TicTacToe.
-    """
+
     ydictionairy = {} #Holds the amount of counters and there value
     rdictionairy = {}
 
@@ -57,8 +56,8 @@ def evaluate(current_state, player):
     yk = 0 #Final counter for machine win
     rk = 0  #Final counter for User win
 
-    #Allows for dynamic amount of x's or o's needed to win depenidng on board size (i.e 5x5 board = 5 x's or o's to win)
-    for i in range(1, 3): #Note: Because it starts wwith 1 instead 0, the ending is BOARD_SIZE not BOARD_SIZE -1. It does not account for the winning move
+    #Allows for dynamic amount of x's or o's needed to win depenidng on board size (i.e 7x7 board = 7 x's or o's to win)
+    for i in range(1, 4): #Note: Because it starts wwith 1 instead 0, the ending is BOARD_SIZE not BOARD_SIZE -1. It does not account for the winning move
         y_counter = f'y{i}'
         ydictionairy[y_counter] = 0
 
@@ -70,16 +69,31 @@ def evaluate(current_state, player):
     lines = []
 
     # Add rows
-    for i in range(3):
-        lines.append(current_state[3])
+    for i in range(6):
+        lines.append(current_state[i])
 
     # Add columns
-    for j in range(3):
-        lines.append([current_state[i][j] for i in range(3)])
+    for j in range(7):
+        lines.append([current_state[i][j] for i in range(6)])
 
-    # Add diagonals
-    lines.append([current_state[i][i] for i in range(3)])
-    lines.append([current_state[i][3-1-i] for i in range(3)])
+   
+
+
+
+    # Diagonals: top-left to bottom-right
+    # Valid starting positions: rows 0 to (6 - 4) and cols 0 to (7 - 4)
+    for row in range(6 - K_TO_WIN + 1):      # rows 0 to 2 (inclusive)
+        for col in range(7 - K_TO_WIN + 1):  # cols 0 to 3 (inclusive)
+            diag = [current_state[row + i][col + i] for i in range(K_TO_WIN)]
+            lines.append(diag)
+
+    # Diagonals: bottom-left to top-right
+    # Valid starting positions: rows 3 to 5 and cols 0 to (7 - 4)
+    for row in range(K_TO_WIN - 1, 6):       # rows 3 to 5 (inclusive)
+        for col in range(7 - K_TO_WIN + 1):    # cols 0 to 3 (inclusive)
+            diag = [current_state[row - i][col + i] for i in range(K_TO_WIN)]
+            lines.append(diag)
+
 
     # Now count patterns
     for line in lines:
@@ -150,8 +164,8 @@ def connect4_main():
     while True:
       
 
-        K_TO_WIN = 4 # k size changes dynamically
-        state = [[' ' for _ in range(6)] for _ in range(7)]
+        K_TO_WIN = 4
+        state = [[' ' for _ in range(7)] for _ in range(6)]
         try:
             depth_input = input("Enter the difficulty level (depth for minimax, higher means harder, e.g., 3): ")
             depth = int(depth_input)

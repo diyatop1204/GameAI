@@ -2,6 +2,7 @@ from minimax import *
 import time
 global BOARD_SIZE
 
+
 move_times=[] #Initialise the count
 BOARD_SIZE = None
 K_TO_WIN = None
