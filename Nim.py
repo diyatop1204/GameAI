@@ -62,12 +62,12 @@ def evaluate(current_state, player):
         else:
             return -1
 
-    #For when player is not in a terminal state: Based on solved theory of NIM, A xor(Nim Sum) of 0 means whoever the current player is in a losing position
+    #For when player is not in a terminal state: Based on solved theory of NIM, A xor of 0 means whoever the current player is in a losing position
     nim_sum = 0
     for row in current_state:
         nim_sum ^= row
 
-    if nim_sum != 0:
+    if nim_sum != 0: #If after xor opperation, nim_sum is not zero,
         return 1
     else:
         return -1

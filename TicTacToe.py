@@ -52,9 +52,22 @@ def evaluate(current_state, player):
     """
     Dynamic evaluation function for (m, n, k)-TicTacToe.
     """
+    Xdictionairy = {} #Holds the amount of counters and there value
+    odictionairy = {}
 
-    X1, X2, Xk = 0, 0, 0
-    O1, O2, Ok = 0, 0, 0
+
+    xk = 0 #Final counter for machine win
+    ok = 0  #Final counter for User win
+
+    #Allows for dynamic amount of x's or o's needed to win depenidng on board size (i.e 5x5 board = 5 x's or o's to win)
+    for i in range(1, BOARD_SIZE): #Note: Because it starts wwith 1 instead 0, the ending is BOARD_SIZE not BOARD_SIZE -1
+        x_counter = f'x{i}'
+        Xdictionairy[x_counter] = 0
+
+        o_counter = f'o{i}'
+        odictionairy[o_counter] = 0
+    
+        
 
     lines = []
 
@@ -81,25 +94,65 @@ def evaluate(current_state, player):
             x_count = window.count(MAX_PLAYER)
             o_count = window.count(MIN_PLAYER)
 
-            if o_count == 0:
-                if x_count == 1:
-                    X1 += 1
-                elif x_count == 2:
-                    X2 += 1
-                elif x_count == K_TO_WIN:
-                    Xk += 1
-            elif x_count == 0:
-                if o_count == 1:
-                    O1 += 1
-                elif o_count == 2:
-                    O2 += 1
-                elif o_count == K_TO_WIN:
-                    Ok += 1
+            # if o_count == 0:
+            #     for i in range(1, BOARD_SIZE):
+            #         if x_count == i:
+            #             Xdictionairy[x_counter] += 1
+            # elif x_count == 0:            
+            # for i in range(1, BOARD_SIZE):
+            #     if o_count == i:
+            #         odictionairy[o_counter] += 1   
+            # if o_count == K_TO_WIN:
+            #     ok += 1
+            
+            if o_count == 0 and x_count > 0:        #If there are no user counters in the row/coloum/diagonal
+
+                #Loops through to see if the amount 
+                
+                    
+                
+                key = f'x{x_count}'
+                if x_count == K_TO_WIN:
+                    xk += 1  
+                elif key in Xdictionairy:
+                    Xdictionairy[key] += 1
+                  
+
+                
+
+            elif x_count == 0 and o_count > 0:   
+                                
+                
+                key = f'o{o_count}'
+                if o_count == K_TO_WIN:
+                    ok += 1
+                elif key in odictionairy:
+                    odictionairy[key] += 1      
+                
+
+
+
+            # if o_count == 0:
+            #     if x_count == 1:
+            #         X1 += 1
+            #     elif x_count == 2:
+            #         X2 += 1
+            #     elif x_count == K_TO_WIN:
+            #         Xk += 1
+            # elif x_count == 0:
+            #     if o_count == 1:
+            #         O1 += 1
+            #     elif o_count == 2:
+            #         O2 += 1
+            #     elif o_count == K_TO_WIN:
+            #         Ok += 1
+            
+            
 
     # Terminal winning conditions:
-    if Xk >= 1:
+    if xk >= 1:
         return 10
-    if Ok >= 1:
+    if ok >= 1:
         return -10
 
     # If no moves remain (draw)
@@ -107,7 +160,22 @@ def evaluate(current_state, player):
         return 0
 
     # Non-terminal evaluation
-    return 3 * X2 + X1 - (3 * O2 + O1)
+
+    # for key in Xdictionairy:
+    #     for i in range(1, BOARD_SIZE):
+    #         Xdictionairy[key] *= i
+
+    # for key in odictionairy:
+    #     for i in range(1, BOARD_SIZE):
+    #         odictionairy[key] *= i        
+
+    xtotal = sum(int(key[1:]) * value for key, value in Xdictionairy.items())
+    ototal = sum(int(key[1:]) * value for key, value in odictionairy.items())
+
+    # xtotal = sum(Xdictionairy.values())
+    # ototal = sum(odictionairy.values())
+
+    return xtotal - ototal
 
         
                         
@@ -185,6 +253,8 @@ def TicTacToe_main():
             print(f"Computer move decision time: {end_time - start_time:.4f} seconds")
         else:
             print("Your turn (MIN - O). Enter row and column (e.g., 0 0):")
+            best_move_user = find_best_move_user(state, depth, get_valid_moves, make_move, evaluate, current_player, MAX_PLAYER, MIN_PLAYER, is_game_over)
+            print("The best move for the user is: (row, column)", best_move_user)
             while True:
                 try:
                     row_input = input(f"Row (0-{BOARD_SIZE - 1}): ")
