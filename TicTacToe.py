@@ -2,6 +2,7 @@ from minimax import *
 import time
 global BOARD_SIZE
 
+
 move_times=[] #Initialise the count
 BOARD_SIZE = None
 K_TO_WIN = None
@@ -52,9 +53,22 @@ def evaluate(current_state, player):
     """
     Dynamic evaluation function for (m, n, k)-TicTacToe.
     """
+    Xdictionairy = {} #Holds the amount of counters and there value
+    odictionairy = {}
 
-    X1, X2, Xk = 0, 0, 0
-    O1, O2, Ok = 0, 0, 0
+
+    xk = 0 #Final counter for machine win
+    ok = 0  #Final counter for User win
+
+    #Allows for dynamic amount of x's or o's needed to win depenidng on board size (i.e 5x5 board = 5 x's or o's to win)
+    for i in range(1, BOARD_SIZE): #Note: Because it starts wwith 1 instead 0, the ending is BOARD_SIZE not BOARD_SIZE -1. It does not account for the winning move
+        x_counter = f'x{i}'
+        Xdictionairy[x_counter] = 0
+
+        o_counter = f'o{i}'
+        odictionairy[o_counter] = 0
+    
+        
 
     lines = []
 
@@ -78,36 +92,54 @@ def evaluate(current_state, player):
         # Sliding window over line
         for start in range(len(line) - K_TO_WIN + 1):
             window = line[start:start+K_TO_WIN]
-            x_count = window.count(MAX_PLAYER)
-            o_count = window.count(MIN_PLAYER)
+            x_count = window.count(MAX_PLAYER) #Counts how many x counters are on the row/colounm/diagonal 
+            o_count = window.count(MIN_PLAYER) #Counts how many o counters are on the row/colounm/diagonal 
 
-            if o_count == 0:
-                if x_count == 1:
-                    X1 += 1
-                elif x_count == 2:
-                    X2 += 1
-                elif x_count == K_TO_WIN:
-                    Xk += 1
-            elif x_count == 0:
-                if o_count == 1:
-                    O1 += 1
-                elif o_count == 2:
-                    O2 += 1
-                elif o_count == K_TO_WIN:
-                    Ok += 1
+      
+            
+            if o_count == 0 and x_count > 0:   #If there are no user counters in the row/colounm/diagonal add 'points' towards the max player indicating a winning move
 
+                #If the amount of x counters are equiivalent to how many are needed to win which is dependent on the board size
+                #  add 1 point to the winning counter indicator xk
+                #If any amounts of x counters are in the row, +1 to its value. (e.g If there are 3 x's,  +1 value will be added, 2x's - + 1 value will be added/assigned)
+                key = f'x{x_count}'
+                if x_count == K_TO_WIN:
+                    xk += 1  
+                elif key in Xdictionairy:
+                    Xdictionairy[key] += 1
+                         
+
+            elif x_count == 0 and o_count > 0:   
+                                
+                 #If the amount of o counters are equiivalent to how many are needed to win for the user which is dependent on the board size
+                #  - 1 point to the winning counter indicated by ok
+                #If any amounts of o counters are in the row, -1 to its value. (e.g If there are 3 o's,  +1 value will be added, 2o's - + 1 value will be added/assigned)
+                key = f'o{o_count}'
+                if o_count == K_TO_WIN:
+                    ok += 1
+                elif key in odictionairy:
+                    odictionairy[key] += 1      
+                
+          
     # Terminal winning conditions:
-    if Xk >= 1:
+    if xk >= 1:
         return 10
-    if Ok >= 1:
+    if ok >= 1:
         return -10
 
     # If no moves remain (draw)
     if not get_valid_moves(current_state):
         return 0
 
-    # Non-terminal evaluation
-    return 3 * X2 + X1 - (3 * O2 + O1)
+    #To determine which positions are statistically more likely to win, add weight to when there are more counters in the row/column/diagonal and less to when there less counters.
+    #e.g If there are 3 x's, it is worth times 3, if there are 2x's it is worth *2. 
+    #Add the value of the moves together to see how much the move is worth 
+    #This is done for both the machine and user
+    xtotal = sum(int(key[1:]) * value for key, value in Xdictionairy.items())
+    ototal = sum(int(key[1:]) * value for key, value in odictionairy.items())
+
+    #The total worth of the move so far to determine how 'good the move' is. The total wroth of the x counters given there position is minuesed from the  value of the opposition as it is showing what the real value would be if the user played its best to make sure the machinne doesn't wine (i.e User is playing so the machine loses)
+    return xtotal - ototal
 
         
                         
@@ -185,6 +217,8 @@ def TicTacToe_main():
             print(f"Computer move decision time: {end_time - start_time:.4f} seconds")
         else:
             print("Your turn (MIN - O). Enter row and column (e.g., 0 0):")
+            best_move_user = find_best_move_user(state, depth, get_valid_moves, make_move, evaluate, current_player, MAX_PLAYER, MIN_PLAYER, is_game_over)
+            print("The best move for the user is: (row, column)", best_move_user)
             while True:
                 try:
                     row_input = input(f"Row (0-{BOARD_SIZE - 1}): ")

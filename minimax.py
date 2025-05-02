@@ -81,10 +81,10 @@ def find_best_move_user(current_state, depth, get_valid_moves, make_move, evalua
         eval_score = max_value(next_state, depth - 1, alpha, beta, evaluate, current_player, get_valid_moves, make_move, MIN_PLAYER, MAX_PLAYER, is_game_over) # Call min_value with alpha and beta
 
         if eval_score < min_eval:
-            max_eval = eval_score
+            min_eval = eval_score
             best_move_row = move[0]
             best_move_col = move[1]
-        alpha = max(alpha, max_eval) # Update alpha in the MAX context
+        beta = min(beta, min_eval) 
 
 
     return [best_move_row, best_move_col]

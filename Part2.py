@@ -3,6 +3,7 @@ import TicTacToeComplete as tttc
 import Nim as Nim
 import NimComplete as NimC
 import TigerVsDogs as Td
+import connect4 as c4
 
 # Basic Game Loop
 if __name__ == "__main__":
@@ -10,7 +11,7 @@ if __name__ == "__main__":
 
     while True:
         try:
-            game_input = input("Which Game would you like to play? TicTacToe = 1, Nim = 2, Tiger vs Dogs = 3 ")
+            game_input = input("Which Game would you like to play? TicTacToe = 1, Nim = 2, Tiger vs Dogs = 3, Connect 4 = 4")
             game = int(game_input)
             if game < 1:
                 print("Invalid game selection - TicTacToe = 1, Nim = 2, Tiger vs Dogs = 3 ")
@@ -77,3 +78,15 @@ if __name__ == "__main__":
             except Exception as e:
                 print(f"There was an error: {e}")
                 break
+
+
+    if game == 4: 
+        print("Setting Connect 4")
+        while True: 
+            try:
+                print("Starting Connect 4 with Alpha Beta Pruning")
+                c4.connect4_main()
+                break
+            except Exception as e:
+                print(f"There was an error: {e}")
+                break        

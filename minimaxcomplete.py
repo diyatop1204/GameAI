@@ -32,8 +32,8 @@ def min_value(current_state, get_valid_moves, make_move, MIN_PLAYER, MAX_PLAYER,
     min_eval = float('inf')
     for move in get_valid_moves(current_state):
         next_state =  make_move(copy_state(current_state), move[0], move[1], MIN_PLAYER)
-        eval_score = max_value(next_state,  get_valid_moves, make_move, MIN_PLAYER, MAX_PLAYER, is_game_over, winner, player) 
-        min_eval = min(min_eval, eval_score)
+        eval_score = max_value(next_state,  get_valid_moves, make_move, MIN_PLAYER, MAX_PLAYER, is_game_over, winner, player) #Children node
+        min_eval = min(min_eval, eval_score) #Finds smallest value from children
     return min_eval
 
 

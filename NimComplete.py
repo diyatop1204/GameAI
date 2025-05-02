@@ -1,3 +1,5 @@
+
+
 from minimaxcomplete import *
 import copy
 import time
@@ -14,15 +16,16 @@ def initialize_state():
     """Initializes the game state (board) to empty."""
     global state
     num_rows = 4
-    state = [2 * i + 1 for i in range(num_rows)]
+    state = []
+    #state = [2 * i + 1 for i in range(num_rows)]
 
 def print_state():
     max_length = max(state) 
     print("\nCurrent Pyramid:")
     for i  in range(len(state)):
-        row_value = state[i]
-        space = (max_length - row_value) // 2
-        print( str(i) + '' * space + '|' * row_value)
+        row = state[i]
+        space = (max_length - row) // 2
+        print( str(i) + '' * space + '|' * row)
 
 # 2. Move Generation Function
 def get_valid_moves(current_state):
@@ -66,24 +69,6 @@ def winner(current_state, player):
             return +1
     return 0
 
-def evaluate(current_state, player):
-
-    if all(row == 0 for row in current_state):
-        if player == MAX_PLAYER: #If current playyer is the AI when there are already no sticks left, AI wins
-            return 1
-        else:
-            return -1
-
-    #For when player is not in a terminal state: Based on solved theory of NIM, A xor(Nim Sum) of 0 means whoever the current player is in a losing position
-    nim_sum = 0
-    for row in current_state:
-        nim_sum ^= row
-
-    if nim_sum != 0:
-        return 1
-    else:
-        return -1
-    
 def is_game_over(current_state, get_valid_moves, winner, player): #Checks if the game is over
     """Game is over when every row is empty."""
     return all(row == 0 for row in current_state)
@@ -104,8 +89,17 @@ def Nim_main():
     except ValueError:
         print("Invalid input, defaulting to 4 rows.")
         num_rows = 4
-    state = [2 * i + 1 for i in range(num_rows)]
+    #state = [2 * i + 1 for i in range(num_rows)]
 
+
+      #Note: Get number of sticks in each row
+    for i in range(num_rows):  
+        try:
+            num_sticks = int(input(f" Enter the number of stick in row: {i}"))
+            state.append(num_sticks)
+        except ValueError:
+            print("Invalid input, defaulting to increments of 2 for each row.")
+            state = [2 * i + 1 for i in range(num_rows)]
 
  
 
@@ -165,7 +159,9 @@ def Nim_main():
             current_player = MAX_PLAYER
 
         #When actual game is over, checks who was the last to take a stick out and won the game
-        if is_game_over(state, get_valid_moves, evaluate, current_player):
+
+
+        if is_game_over(state, get_valid_moves, winner, current_player):
             print_state()
             # The player who takes the last stick loses.
             if current_player == MAX_PLAYER:
