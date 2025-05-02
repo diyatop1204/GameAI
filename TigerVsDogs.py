@@ -72,7 +72,7 @@ def evaluate(current_state, player):
     # Count dogs
     dog_count = sum(row.count('D') for row in current_state)
     
-    # If 10 or more dogs have been captured, tiger wins
+    # If 6 or more dogs have been captured, tiger wins
     if dog_count <= 6:
         return 1000 if player == 'T' else -1000
     
@@ -124,14 +124,16 @@ def make_move(current_state, start_pos, end_pos, player):
                     new_state[mid_r][mid_c] = '.'  # Capture the tiger
     return new_state
 
-
 def is_game_over(current_state, *args):
     """Checks if the game is over."""
-    # Check if tiger has won (10 or more dogs captured)
-    dog_count = sum(row.count('D') for row in current_state)
-    if dog_count <= 6:
+    # Check if 6 or more dogs have been captured
+    captured_dogs = count_captured_dogs(state, current_state)
+    if captured_dogs == 6:
+        print(f"Game Over: The tiger has captured {captured_dogs} dogs!")
         return True
-    
+    elif captured_dogs > 6:
+        print(f"Game Over: The tiger has captured {captured_dogs} dogs!")
+
     # Check if dogs have won (tiger is trapped)
     tiger_pos = find_tiger(current_state)
     if not tiger_pos:
@@ -188,7 +190,7 @@ def find_dogs(current_state):
 
 def count_captured_dogs(initial_state, current_state):
     """Count how many dogs have been captured so far"""
-    initial_dogs = sum(row.count('D') for row in initial_state)
+    initial_dogs = 16
     current_dogs = sum(row.count('D') for row in current_state)
     return initial_dogs - current_dogs
 
@@ -393,17 +395,17 @@ def Tiger_vs_Dogs_main():
     ai_player = MIN_PLAYER if user_player == MAX_PLAYER else MAX_PLAYER
     current_player = MAX_PLAYER  # Tiger always starts first
 
-    depth = 3 
+    depth = 1
     while True:
         try:
             depth = int(input("Enter the difficulty level (depth for minimax, higher means harder, e.g., 3): "))
             if depth > 0:
-                print("Depth should be at least 1. Using default depth 3.")
-                depth = 3
+                print("Depth should be at least 1. Using default depth 1.")
+                depth = 1
                 break
         except ValueError:
-            print("Invalid input. Please enter an integer depth. Using default depth 3.")
-            depth = 3
+            print("Invalid input. Please enter an integer depth. Using default depth 1.")
+            depth = 1
             break
     print(f"Difficulty level set to depth: {depth}")
 
@@ -416,6 +418,7 @@ def Tiger_vs_Dogs_main():
             if user_move:
                 start_r, start_c, end_r, end_c = user_move
                 state = make_move(state, (start_r, start_c), (end_r, end_c), current_player)
+                is_game_over(state)
             else:
                 print("No valid moves available for you!")
         else:
