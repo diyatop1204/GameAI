@@ -3,6 +3,7 @@ import TicTacToeComplete as tttc
 import Nim as Nim
 import NimComplete as NimC
 import TigerVsDogs as Td
+import connect4 as c4
 
 # Basic Game Loop
 if __name__ == "__main__":
@@ -77,3 +78,15 @@ if __name__ == "__main__":
             except Exception as e:
                 print(f"There was an error: {e}")
                 break
+
+
+    if game == 4: 
+        print("Setting up Tiger vs Dogs")
+        while True: 
+            try:
+                print("Starting Tiger vs Dogs with Alpha Beta Pruning")
+                c4.connect4_main()
+                break
+            except Exception as e:
+                print(f"There was an error: {e}")
+                break        
