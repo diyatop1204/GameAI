@@ -339,47 +339,6 @@ def dog_min_value(current_state, depth, alpha, beta):
         beta = min(beta, min_eval)
     return min_eval
 
-def find_tiger_best_move(current_state):
-    valid_moves = get_valid_moves(current_state, 'T')
-    print("Valid moves:\n", valid_moves)  # Debugging line to check the moves list
-
-    if valid_moves:
-        best_move = valid_moves[0]  # Assuming you're selecting the first valid move
-        
-        # best_move is a tuple like ((2, 2), (1, 2)), so we need to unpack it correctly
-        start_coords, end_coords = best_move  # Unpack the move correctly
-        
-        start_r, start_c = start_coords  # Extract row and column of start
-        end_r, end_c = end_coords  # Extract row and column of end
-        
-        # Debugging output to verify
-        print(f"Best move: {best_move}")
-        print(f"Unpacked move: ({start_r}, {start_c}) -> ({end_r}, {end_c})")
-        
-        return (start_r, start_c, end_r, end_c)
-
-    return None  # Return None if no valid moves are available
-def find_dogs_best_move(current_state):
-    valid_moves = get_dog_possible_moves(current_state)
-    print("Valid moves for dogs:\n", valid_moves)  # Debugging line to check the moves list
-
-    if valid_moves:
-        best_move = valid_moves[0]  # Assuming you're selecting the first valid move
-        
-        # best_move is a tuple like ((2, 2), (3, 2)), so we need to unpack it correctly
-        start_coords, end_coords = best_move  # Unpack the move correctly
-        
-        start_r, start_c = start_coords  # Extract row and column of start
-        end_r, end_c = end_coords  # Extract row and column of end
-        
-        # Debugging output to verify
-        print(f"Best move: {best_move}")
-        print(f"Unpacked move: ({start_r}, {start_c}) -> ({end_r}, {end_c})")
-        
-        return (start_r, start_c, end_r, end_c)
-
-    return None  # Return None if no valid moves are available
-
 def Tiger_vs_Dogs_main():
     global state, state_counter, user_choice
     state_counter = 0
@@ -398,10 +357,9 @@ def Tiger_vs_Dogs_main():
     depth = 1
     while True:
         try:
-            depth = int(input("Enter the difficulty level (depth for minimax, higher means harder, e.g., 3): "))
-            if depth > 0:
-                print("Depth should be at least 1. Using default depth 1.")
-                depth = 1
+            depth_input = int(input("Enter the difficulty level (depth for minimax, higher means harder, e.g., 3): "))
+            if depth >= 1:
+                depth = depth_input
                 break
         except ValueError:
             print("Invalid input. Please enter an integer depth. Using default depth 1.")
@@ -411,7 +369,7 @@ def Tiger_vs_Dogs_main():
 
     while not is_game_over(state):
         print(f"\nIt's {current_player}'s turn.")
-
+                
         if current_player == user_player:
             # USER'S TURN
             user_move = get_user_move(state, user_choice)
@@ -432,9 +390,6 @@ def Tiger_vs_Dogs_main():
 
                 move = find_best_move(state, depth, get_valid_moves_with_player, make_move, evaluate,
                                     ai_player, MAX_PLAYER, MIN_PLAYER, is_game_over)
-                
-                # move = find_best_move(state, depth, get_valid_moves, make_move, evaluate,
-                #                     ai_player, ai_player, user_player, is_game_over)
             else:
                 move = find_best_move(state, depth, get_valid_moves_with_player, make_move, evaluate,
                                     ai_player, MAX_PLAYER, MIN_PLAYER, is_game_over)
@@ -456,7 +411,6 @@ def Tiger_vs_Dogs_main():
             current_player = 'D'
         else: 
             current_player = 'T'
-        # current_player = MIN_PLAYER if current_player == MAX_PLAYER else MAX_PLAYER
 
     # Game over
     winner = "Tiger" if evaluate(state, MAX_PLAYER) > 0 else "Dogs"

@@ -1,5 +1,3 @@
-
-
 from minimaxcomplete import *
 import copy
 import time
@@ -81,8 +79,6 @@ def Nim_main():
 
     print("Welcome to Nim vs Computer Complete Tree Search ")
    
-
-
     #Note: Get number of rows of sticks
     try:
         num_rows = int(input("Enter the number of rows of sticks "))
@@ -101,7 +97,6 @@ def Nim_main():
             print("Invalid input, defaulting to increments of 2 for each row.")
             state = [2 * i + 1 for i in range(num_rows)]
 
- 
 
     first_move_chooser = 1  # Default computer first
     while True:
@@ -143,16 +138,16 @@ def Nim_main():
             print("The best move for the user is: (row to remove, how many sticks to remove)", best_move_user)
             while True:
                 try:
-                    row_input = input("Enter row to remove stick (0 (Top) - Amount of Rows Seleced(Bottom))")
+                    row_input = input(f"Enter row to remove stick (0 (Top) - {num_rows} Selected(Bottom)): ")
                     stick_input = input("How many sticks to remove? ")
                     row = int(row_input)
                     k = int(stick_input)
                     if is_valid_move(state, row, k):
                         break
                     else:
-                        print("Invalid move. There are no sticks in this row Try again:")
+                        print("Invalid move. There are no sticks in this row Try again: ")
                 except ValueError:
-                    print("Invalid format. Enter row to remove stick (0 (Top) - Amount of Rows Selected (Bottom)) and how many sticks to remove")
+                    print(f"Invalid format. Enter row to remove stick (0 (Top) - {num_rows} Selected (Bottom)) and how many sticks to remove: ")
 
             state = make_move(state, row, k, MIN_PLAYER) #Remakes the state as chips have been removed
             

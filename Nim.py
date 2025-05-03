@@ -132,7 +132,7 @@ def Nim_main():
                 first_move_chooser = 1
             break
         except ValueError:
-            print("Invalid input. Please enter 1 or 2. Computer will  go first by default.")
+            print("Invalid input. Please enter 1 or 2. Computer will go first by default.")
             first_move_chooser = 1
             break
 
@@ -146,7 +146,7 @@ def Nim_main():
     while True:
         print_state()
         if current_player == MAX_PLAYER:
-            print("Computer  is thinking...")
+            print("Computer is thinking...")
             nim_start_time = time.time() #start the timer for decision time
             best_move = find_best_move(state, depth, get_valid_moves, make_move, evaluate, current_player, MAX_PLAYER, MIN_PLAYER, is_game_over) 
             nim_end_time = time.time() # end the timer
@@ -160,16 +160,16 @@ def Nim_main():
             print("Your turn")
             while True:
                 try:
-                    row_input = input("Enter row to remove stick (0 (Top) - Amount of Rows Seleced(Bottom))")
+                    row_input = input(f"Enter row to remove stick (Row 0 (Top) - Row {num_rows-1} (Bottom)): ")
                     stick_input = input("How many sticks to remove? ")
                     row = int(row_input)
                     k = int(stick_input)
                     if is_valid_move(state, row, k):
                         break
                     else:
-                        print("Invalid move. There are no sticks in this row Try again:")
+                        print("Invalid move. There are no sticks in this row. Try again ")
                 except ValueError:
-                    print("Invalid format. Enter row to remove stick (0 (Top) - Amount of Rows Selected (Bottom)) and how many sticks to remove")
+                    print(f"Invalid format. Enter row to remove stick (Row 0 (Top) - Row {num_rows-1} Selected (Bottom)) and how many sticks to remove: ")
 
             state = make_move(state, row, k, MIN_PLAYER) #Remakes the state as chips have been removed
             
