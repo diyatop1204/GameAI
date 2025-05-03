@@ -149,8 +149,8 @@ def TicTacToe_main():
             print("The best move for the user is: (row, column)", best_move_user)
             while True:
                 try:
-                    row_input = input(f"Row (0-{BOARD_SIZE}): ",)
-                    col_input = input(f"Column (0-{BOARD_SIZE}): ")
+                    row_input = input(f"Row (0-{BOARD_SIZE - 1}): ",)
+                    col_input = input(f"Column (0-{BOARD_SIZE - 1}): ")
                     row = int(row_input)
                     col = int(col_input)
                     if is_valid_move(state, row, col):

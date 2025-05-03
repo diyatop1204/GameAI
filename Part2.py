@@ -11,7 +11,7 @@ if __name__ == "__main__":
 
     while True:
         try:
-            game_input = input("Which Game would you like to play? TicTacToe = 1, Nim = 2, Tiger vs Dogs = 3, Connect 4 = 4")
+            game_input = input("Which Game would you like to play? TicTacToe = 1, Nim = 2, Tiger vs Dogs = 3, Connect 4 = 4? ")
             game = int(game_input)
             if game < 1:
                 print("Invalid game selection - TicTacToe = 1, Nim = 2, Tiger vs Dogs = 3 ")
