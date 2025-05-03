@@ -33,22 +33,35 @@ def get_valid_moves(current_state):
     valid_moves = []
     
 
+    # getting the coordinate values through the indexes and gets the sublists from the board
+    # for row_index, current_row in enumerate(current_state):
+    #     for column_index, current_column in current_row:
+
+
+
+    #         if current_column != EMPTY_CELL: # Checks if the cell is not empty, otherwise go to elif
+    #             continue
+    #         elif row_index != 5 and current_state[row_index + 1][column_index] != EMPTY_CELL: # If this is True then the current coordinate is a valid spot
+    #             valid_moves.append([ row_index, column_index])
     for i in range(6):  
         for j in range(7):
-            if current_state[i][j] == EMPTY_CELL:
-                valid_moves.append([i, j])
+            # if current_state[i][j] == EMPTY_CELL:
+            #     valid_moves.append([i, j])
             
-            # Check the bottom row of the board to see if any cells are sempty
-            # if (current_state[5][j] == EMPTY_CELL):
-            #     valid_moves.append([5, j])
+            # Check the bottom row of the board to see if any cells are empty
+            if (current_state[5][j] == EMPTY_CELL):
+                valid_moves.append([5, j])
 
             
-            # elif i < 5 and  (current_state[i][j] == EMPTY_CELL and current_state[i + 1][j] != EMPTY_CELL):
-            #     valid_moves.append([i, j])
+            elif i < 5 and  (current_state[i][j] == EMPTY_CELL and current_state[i + 1][j] != EMPTY_CELL):
+                valid_moves.append([i, j])
     return valid_moves
 
 def is_valid_move(current_state, row, col):
     """Checks if a move (row, col) is valid in the current state."""
+
+    if col < 0 or col > 7:
+        return False
 
     if row == -1:
         for current_row in range(len(current_state)-1, -1, -1):
@@ -142,7 +155,7 @@ def evaluate(current_state, player):
 
       
             
-            if r_count == 0 and y_count > 0:   #If there are no user counters in the row/colounm/diagonal add 'points' towards the may player indicating a winning move
+            if r_count == 0:   #If there are no user counters in the row/colounm/diagonal add 'points' towards the may player indicating a winning move
 
                 #If the amount of y counters are equiivalent to how many are needed to win which is dependent on the board size
                 #  add 1 point to the winning counter indicator yk
@@ -154,7 +167,7 @@ def evaluate(current_state, player):
                     ydictionairy[key] += 1
                          
 
-            elif y_count == 0 and r_count > 0:   
+            elif y_count == 0:   
                                 
                  #If the amount of o counters are equiivalent to how many are needed to win for the user which is dependent on the board size
                 #  - 1 point to the winning counter indicated by ok
@@ -167,14 +180,12 @@ def evaluate(current_state, player):
                 
           
     # Terminal winning conditions:
-    if yk >= 1:
+    if yk > 0:
         return 10
-    if rk >= 1:
+    if rk > 0:
         return -10
 
-    # If no moves remain (draw)
-    if not get_valid_moves(current_state):
-        return 0
+   
 
     #To determine which positions are statistically more likely to win, add weight to when there are more counters in the row/column/diagonal and less to when there less counters.
     #e.g If there are 3 y's, it is worth times 3, if there are 2y's it is worth *2. 
@@ -184,7 +195,12 @@ def evaluate(current_state, player):
     rtotal = sum(int(key[1:]) * value for key, value in rdictionairy.items())
 
     #The total worth of the move so far to determine how 'good the move' is. The total wroth of the y counters given there position is minuesed from the  value of the opposition as it is showing what the real value would be if the user played its best to make sure the machinne doesn't wine (i.e User is playing so the machine loses)
-    return ytotal - rtotal                          
+    return ytotal - rtotal  
+
+#  # If no moves remain (draw)
+#     if not get_valid_moves(current_state):
+#         return 0
+                            
 def is_game_over(current_state, get_valid_moves, evaluate, player):
     """Checks if the game is over (win or draw)."""
     return not get_valid_moves(current_state) or abs(evaluate(current_state, player)) == 10
