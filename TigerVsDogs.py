@@ -189,16 +189,15 @@ def count_captured_dogs(initial_state, current_state):
     return initial_dogs - current_dogs
 
 def remove_adjacent_dogs_if_surrounded(new_state, end_row, end_col):
-    """Removes adjacent dogs in a straight line if they meet the condition."""
+    """Removes adjacent dogs in a straight line if they are the only two dogs in that direction."""
     directions = [
-        (0, 1),   # Horizontal 
-        (1, 0),   # Vertical 
-        (1, 1),   # Diagonal 
-        (1, -1)   # Diagonal 
+        (0, 1),   # Horizontal
+        (1, 0),   # Vertical
+        (1, 1),   # Diagonal \
+        (1, -1)   # Diagonal /
     ]
 
     for dr, dc in directions:
-        # Get positions left and right of the tiger in that direction
         pos1 = (end_row - dr, end_col - dc)
         pos2 = (end_row + dr, end_col + dc)
 
@@ -206,21 +205,27 @@ def remove_adjacent_dogs_if_surrounded(new_state, end_row, end_col):
             r1, c1 = pos1
             r2, c2 = pos2
 
-            # Check if both are dogs
             if new_state[r1][c1] == 'D' and new_state[r2][c2] == 'D':
-                # Check that those dogs have no neighbors along the same line
-                r1_next, c1_next = r1 - dr, c1 - dc
-                r2_next, c2_next = r2 + dr, c2 + dc
-
-                r1_valid = 0 <= r1_next < 5 and 0 <= c1_next < 5
-                r2_valid = 0 <= r2_next < 5 and 0 <= c2_next < 5
-
-                r1_isolated = not (r1_valid and new_state[r1_next][c1_next] == 'D')
-                r2_isolated = not (r2_valid and new_state[r2_next][c2_next] == 'D')
-
-                if r1_isolated and r2_isolated:
-                    new_state[r1][c1] = '.'
-                    new_state[r2][c2] = '.'
+                # Check for any other dogs further in both directions
+                # Scan in negative direction from pos1
+                r_neg, c_neg = r1 - dr, c1 - dc
+                while 0 <= r_neg < 5 and 0 <= c_neg < 5:
+                    if new_state[r_neg][c_neg] == 'D':
+                        break  # Found a third dog
+                    r_neg -= dr
+                    c_neg -= dc
+                else:
+                    # Scan in positive direction from pos2
+                    r_pos, c_pos = r2 + dr, c2 + dc
+                    while 0 <= r_pos < 5 and 0 <= c_pos < 5:
+                        if new_state[r_pos][c_pos] == 'D':
+                            break  # Found a third dog
+                        r_pos += dr
+                        c_pos += dc
+                    else:
+                        # No extra dogs found in either direction — remove both
+                        new_state[r1][c1] = '.'
+                        new_state[r2][c2] = '.'
 
 # Modified minimax functions specifically for Tiger vs Dogs
 def tiger_max_value(current_state, depth, alpha, beta):
