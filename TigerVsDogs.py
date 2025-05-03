@@ -1,6 +1,7 @@
 from minimax import *
 import copy
 import time
+from functools import partial
 
 tiger_move_times = []
 state = None  # Global state variable
@@ -33,15 +34,8 @@ def get_valid_moves(current_state, player=None):
     """Generates a list of valid moves for the current player (either 'T' or 'D')."""
     moves = []
 
-    # Infer the player if it's not given
-    if player is None:
-        # Count T and D to guess whose turn it is
-        flat = sum(current_state, [])  # Flatten the board
-        tiger_count = flat.count('T')
-        dog_count = flat.count('D')
-
-        # Basic heuristic: if dogs > tigers, it's dog's turn
-        player = 'D' if dog_count > tiger_count else 'T'
+    if player is None: # If player is not given
+        raise ValueError("Player must be specified for get_valid_moves.")
 
     if player == 'T':  # Tiger's turn
         tiger_position = find_tiger(current_state)
@@ -64,6 +58,7 @@ def get_valid_moves(current_state, player=None):
                     moves.append(((r, c), (nr, nc)))
 
     return moves
+
 
 def evaluate(current_state, player):
     """Evaluates the game state from the perspective of the current player."""
@@ -129,10 +124,9 @@ def is_game_over(current_state, *args):
     # Check if 6 or more dogs have been captured
     captured_dogs = count_captured_dogs(state, current_state)
     if captured_dogs == 6:
-        print(f"Game Over: The tiger has captured {captured_dogs} dogs!")
         return True
     elif captured_dogs > 6:
-        print(f"Game Over: The tiger has captured {captured_dogs} dogs!")
+        return True
 
     # Check if dogs have won (tiger is trapped)
     tiger_pos = find_tiger(current_state)
@@ -235,11 +229,11 @@ def tiger_max_value(current_state, depth, alpha, beta):
     state_counter += 1
 
     if is_game_over(current_state) or depth == 0:
-        return evaluate(current_state, MAX_PLAYER)
+        return evaluate(current_state, 'T')
 
     max_eval = -float('inf')
     for move in get_valid_moves(current_state, 'T'):
-        next_state = make_move(copy.deepcopy(current_state), move[0], move[1], MAX_PLAYER)
+        next_state = make_move(copy.deepcopy(current_state), move[0], move[1], 'T')
         eval_score = tiger_min_value(next_state, depth - 1, alpha, beta)
         max_eval = max(max_eval, eval_score)
         if max_eval >= beta:  # Beta cutoff
@@ -252,11 +246,11 @@ def dog_max_value(current_state, depth, alpha, beta):
     state_counter += 1
 
     if is_game_over(current_state) or depth == 0:
-        return evaluate(current_state, MAX_PLAYER)  # Use evaluation function for dogs
+        return evaluate(current_state, 'D')  # Use evaluation function for dogs
 
     max_eval = -float('inf')
     for move in get_dog_possible_moves(current_state):
-        next_state = make_move(copy.deepcopy(current_state), move[0], move[1], MAX_PLAYER)
+        next_state = make_move(copy.deepcopy(current_state), move[0], move[1], 'D')
         eval_score = dog_min_value(next_state, depth - 1, alpha, beta)
         max_eval = max(max_eval, eval_score)
         if max_eval >= beta:  # Beta cutoff
@@ -315,7 +309,7 @@ def tiger_min_value(current_state, depth, alpha, beta):
 
     min_eval = float('inf')
     for move in get_valid_moves(current_state, 'T'):
-        next_state = make_move(copy.deepcopy(current_state), move[0], move[1], MIN_PLAYER)
+        next_state = make_move(copy.deepcopy(current_state), move[0], move[1], 'T')
         eval_score = tiger_max_value(next_state, depth - 1, alpha, beta)
         min_eval = min(min_eval, eval_score)
         if min_eval <= alpha:  # Alpha cutoff
@@ -332,7 +326,7 @@ def dog_min_value(current_state, depth, alpha, beta):
 
     min_eval = float('inf')
     for move in get_tiger_possible_moves(current_state):
-        next_state = make_move(copy.deepcopy(current_state), move[0], move[1], MIN_PLAYER)
+        next_state = make_move(copy.deepcopy(current_state), move[0], move[1], 'D')
         eval_score = dog_max_value(next_state, depth - 1, alpha, beta)
         min_eval = min(min_eval, eval_score)
         if min_eval <= alpha:  # Alpha cutoff
@@ -392,9 +386,10 @@ def Tiger_vs_Dogs_main():
         user_choice = input("Do you want to play as the Tiger (T) or the Dogs (D)? ").strip().upper()
     
     user_player = user_choice
-    ai_player = MIN_PLAYER if user_player == MAX_PLAYER else MAX_PLAYER
-    current_player = MAX_PLAYER  # Tiger always starts first
-
+    ai_player = 'D' if user_player == 'T' else 'T'
+    current_player = 'T' # Tiger always starts first
+    get_valid_moves_with_player = partial(get_valid_moves, player=ai_player)
+    
     depth = 1
     while True:
         try:
@@ -425,36 +420,42 @@ def Tiger_vs_Dogs_main():
             # AI'S TURN
             print("AI is thinking...")
             start_time = time.time()
-            move = find_best_move(state, depth, get_valid_moves, make_move, evaluate, ai_player, MAX_PLAYER, MIN_PLAYER, is_game_over)
+
+            # Flip roles 
+            
+            if ai_player == MIN_PLAYER:
+
+                move = find_best_move(state, depth, get_valid_moves_with_player, make_move, evaluate,
+                                    ai_player, MAX_PLAYER, MIN_PLAYER, is_game_over)
+                
+                # move = find_best_move(state, depth, get_valid_moves, make_move, evaluate,
+                #                     ai_player, ai_player, user_player, is_game_over)
+            else:
+                move = find_best_move(state, depth, get_valid_moves_with_player, make_move, evaluate,
+                                    ai_player, MAX_PLAYER, MIN_PLAYER, is_game_over)
+
             move_time = time.time() - start_time
             tiger_move_times.append(move_time)
             print(f"AI move took {move_time:.4f} seconds.")
 
             if move:
                 (start_r, start_c), (end_r, end_c) = move
-                state = make_move(state, (start_r, start_c), (end_r, end_c), current_player)
+                state = make_move(state, (start_r, start_c), (end_r, end_c), ai_player)  
+
             else:
                 print("AI has no valid moves!")
-
         print_state()
 
         # Switch player
-        current_player = MIN_PLAYER if current_player == MAX_PLAYER else MAX_PLAYER
+        if current_player == 'T':
+            current_player = 'D'
+        else: 
+            current_player = 'T'
+        # current_player = MIN_PLAYER if current_player == MAX_PLAYER else MAX_PLAYER
 
     # Game over
     winner = "Tiger" if evaluate(state, MAX_PLAYER) > 0 else "Dogs"
     print(f"Game Over! {winner} wins!")
-
-def get_move_input():
-    while True:
-        user_input = input("Enter your move as 'start_row,start_col end_row,end_col': ")
-        try:
-            parts = user_input.strip().split()
-            start = tuple(map(int, parts[0].split(',')))
-            end = tuple(map(int, parts[1].split(',')))
-            return (start, end)
-        except (ValueError, IndexError):
-            print("Invalid format. Please enter your move like: '1,2 1,3'")
 
 if __name__ == "__main__":
     Tiger_vs_Dogs_main()
