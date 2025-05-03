@@ -100,7 +100,8 @@ def evaluate(current_state, player):
 
     ydictionairy = {} #Holds the amount of counters and there value
     rdictionairy = {}
-
+    global r_count
+    global y_count
     global yk
     yk = 0 #Final counter for machine win
     rk = 0  #Final counter for User win
@@ -173,17 +174,18 @@ def evaluate(current_state, player):
                     key = f'y{y_count}'
                 if y_count == K_TO_WIN:
                     yk += 1  
-                elif key in ydictionairy:
-                    ydictionairy[key] += 1 * y_count #Gives weight on value of move depending if it is 3 reds, 2reds, etc. Point is added only if it appears not if all appear
+                elif y_count < K_TO_WIN and key in ydictionairy:
+                    ydictionairy[key] += 1  #Gives weight on value of move depending if it is 3 reds, 2reds, etc. Point is added only if it appears not if all appear
+                    ydictionairy[key] *= y_count
 
-
-            if y_count == 0 and r_count > 0:    
+            elif y_count == 0 and r_count > 0:    
                 if r_count < K_TO_WIN:
                     key = f'r{r_count}'
                 if r_count == K_TO_WIN:
                     rk += 1  
-                elif key in ydictionairy:
-                    rdictionairy[key] += 1 * r_count    
+                elif r_count < K_TO_WIN and key in ydictionairy:
+                    rdictionairy[key] += 1 
+                    rdictionairy[key] *= r_count    
             
             
             # if  y_count < K_TO_WIN and r_count == 0:
@@ -240,6 +242,7 @@ def evaluate(current_state, player):
     
     global ytotal
     global rtotal
+   
 
     # ytotal = sum(int(key[1:]) * value for key, value in ydictionairy.items())
     # rtotal = sum(int(key[1:]) * value for key, value in rdictionairy.items())
@@ -319,7 +322,7 @@ def connect4_main():
         else:
             print("Your turn (MIN  - R). Enter column (0-5):")
             best_move_user = find_best_move_user(state, depth, get_valid_moves, make_move, evaluate, current_player, MAX_PLAYER, MIN_PLAYER, is_game_over)
-            print("The best move for the user is column", best_move_user)
+            print("The best move for the user is column", best_move_user[-1])
             while True:
                 try:
                     # row_input = input(f"Row (0-{5}): ")
