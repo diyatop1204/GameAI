@@ -17,27 +17,43 @@ def initialize_state():
 
 def print_state():
     """Prints the current game state (board) to the console."""
-    print("----------------------------")
+    print("-----------------------------")
     for i in range(6):
         print("| ", end="")
         for j in range(7):
             print(state[i][j] + " | ", end="")
         print()
-        print("----------------------------")
+        print("-----------------------------")
 
 # 2. Move Generation Function
 def get_valid_moves(current_state):
     """Returns a list of valid moves (empty cell coordinates) in the current state."""
     valid_moves = []
-    for i in range(6):
+    
+
+    for i in range(6):  
         for j in range(7):
-            if current_state[i][j] == EMPTY_CELL:
+            
+            if (current_state[5][j] == EMPTY_CELL):
+                valid_moves.append([5, j])
+
+            
+            elif i < 5 and  (current_state[i][j] == EMPTY_CELL and current_state[i + 1][j] != EMPTY_CELL):
                 valid_moves.append([i, j])
     return valid_moves
 
 def is_valid_move(current_state, row, col):
     """Checks if a move (row, col) is valid in the current state."""
-    return 0 <= row < 6 and 0 <= col < 7 and current_state[row][col] == EMPTY_CELL
+    
+    if row == 5 and current_state[row][col] == EMPTY_CELL:
+        return True
+    
+    elif row < 5 and  (0 <= row < 6 and 0 <= col < 7 and current_state[row][col] == EMPTY_CELL  and current_state[row + 1][col] != EMPTY_CELL):
+        return True
+    
+    else:
+        return False
+    
 
 def make_move(current_state, row, col, player):
     """Makes a move on the state if it is valid."""
@@ -78,19 +94,17 @@ def evaluate(current_state, player):
 
    
 
-
-
     # Diagonals: top-left to bottom-right
-    # Valid starting positions: rows 0 to (6 - 4) and cols 0 to (7 - 4)
-    for row in range(6 - K_TO_WIN + 1):      # rows 0 to 2 (inclusive)
-        for col in range(7 - K_TO_WIN + 1):  # cols 0 to 3 (inclusive)
+    # Valid starting positions: rows 0 to 6 - 4 and cols 0 to 7 - 4
+    for row in range(6 - K_TO_WIN + 1):      # rows 0 to 2 
+        for col in range(7 - K_TO_WIN + 1):  # columns 0 to 3 
             diag = [current_state[row + i][col + i] for i in range(K_TO_WIN)]
             lines.append(diag)
 
     # Diagonals: bottom-left to top-right
-    # Valid starting positions: rows 3 to 5 and cols 0 to (7 - 4)
-    for row in range(K_TO_WIN - 1, 6):       # rows 3 to 5 (inclusive)
-        for col in range(7 - K_TO_WIN + 1):    # cols 0 to 3 (inclusive)
+    # Valid starting positions: rows 3 to 5 and cols 0 to 7 - 4
+    for row in range(K_TO_WIN - 1, 6):       # rows 3 to 5 inclusive
+        for col in range(7 - K_TO_WIN + 1):    # cols 0 to 3 inclusive
             diag = [current_state[row - i][col + i] for i in range(K_TO_WIN)]
             lines.append(diag)
 
@@ -159,7 +173,7 @@ def connect4_main():
     global K_TO_WIN, state
     current_player = MAX_PLAYER  # MAX starts first
 
-    print("Welcome to Tic-Tac-Toe vs Computer (Minimax with Alpha-Beta Pruning)! ")
+    print("Welcome to Connect 4 vs Computer (Minimax with Alpha-Beta Pruning)! ")
     depth = 3  # Default depth
     while True:
       
@@ -231,6 +245,7 @@ def connect4_main():
                         print("Invalid move. Cell is not empty or out of bounds. Try again:")
                 except ValueError:
                     print("Invalid input format. Enter row and column as numbers (e.g., 0 0). Try again:")
+                    
 
             make_move(state, row, col, MIN_PLAYER)
             current_player = MAX_PLAYER
