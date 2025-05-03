@@ -100,8 +100,9 @@ def evaluate(current_state, player):
 
     ydictionairy = {} #Holds the amount of counters and there value
     rdictionairy = {}
-
-
+    global r_count
+    global y_count
+    global yk
     yk = 0 #Final counter for machine win
     rk = 0  #Final counter for User win
 
@@ -155,28 +156,72 @@ def evaluate(current_state, player):
 
       
             
-            if r_count == 0:   #If there are no user counters in the row/colounm/diagonal add 'points' towards the may player indicating a winning move
+            #If there are no user counters in the row/colounm/diagonal add 'points' towards the may player indicating a winning move
 
                 #If the amount of y counters are equiivalent to how many are needed to win which is dependent on the board size
                 #  add 1 point to the winning counter indicator yk
                 #If any amounts of y counters are in the row, +1 to its value. (e.g If there are 3 y's,  +1 value will be added, 2y's - + 1 value will be added/assigned)
-                key = f'y{y_count}'
+                
+               
+            
+            if r_count == 0 and y_count > 0:   #If there are no user counters in the row/colounm/diagonal add 'points' towards the max player indicating a winning move
+
+            #If the amount of x counters are equiivalent to how many are needed to win which is dependent on the board size
+            #  add 1 point to the winning counter indicator xk
+            #If any amounts of x counters are in the row, +1 to its value. (e.g If there are 3 x's,  +1 value will be added, 2x's - + 1 value will be added/assigned)
+                
+                if y_count < K_TO_WIN:
+                    key = f'y{y_count}'
                 if y_count == K_TO_WIN:
                     yk += 1  
-                elif key in ydictionairy:
-                    ydictionairy[key] += 1
-                         
+                elif y_count < K_TO_WIN and key in ydictionairy:
+                    ydictionairy[key] += 1  #Gives weight on value of move depending if it is 3 reds, 2reds, etc. Point is added only if it appears not if all appear
+                    ydictionairy[key] *= y_count
 
-            elif y_count == 0:   
-                                
-                 #If the amount of o counters are equiivalent to how many are needed to win for the user which is dependent on the board size
-                #  - 1 point to the winning counter indicated by ok
-                #If any amounts of o counters are in the row, -1 to its value. (e.g If there are 3 o's,  +1 value will be added, 2o's - + 1 value will be added/assigned)
-                key = f'r{r_count}'
+            elif y_count == 0 and r_count > 0:    
+                if r_count < K_TO_WIN:
+                    key = f'r{r_count}'
                 if r_count == K_TO_WIN:
-                    rk += 1
-                elif key in rdictionairy:
-                    rdictionairy[key] += 1      
+                    rk += 1  
+                elif r_count < K_TO_WIN and key in ydictionairy:
+                    rdictionairy[key] += 1 
+                    rdictionairy[key] *= r_count    
+            
+            
+            # if  y_count < K_TO_WIN and r_count == 0:
+            #     key = f'y{y_count}'
+            #     if key in ydictionairy:
+            #         ydictionairy[key] += 1 * y_count
+            # elif y_count == K_TO_WIN and r_count == 0:
+            #     yk += 1          
+                        
+
+        
+                            
+                #If the amount of o counters are equiivalent to how many are needed to win for the user which is dependent on the board size
+            #  - 1 point to the winning counter indicated by ok
+            #If any amounts of o counters are in the row, -1 to its value. (e.g If there are 3 o's,  +1 value will be added, 2o's - + 1 value will be added/assigned)
+            
+            
+            # if  r_count < K_TO_WIN and y_count == 0:
+            #     key = f'r{r_count}'
+            #     if key in rdictionairy:
+            #         rdictionairy[key] += 1 * r_count
+            # elif r_count == K_TO_WIN and y_count == 0:
+            #     rk += 1  
+                
+                # if r_count == K_TO_WIN:
+                #     rk += 1  
+                # elif  r_count < K_TO_WIN:
+                #     key = f'r{r_count}'
+                #     if key in rdictionairy:
+                #         rdictionairy[key] += 1
+                
+                # key = f'r{r_count}'
+                # if r_count == K_TO_WIN:
+                #     rk += 1
+                # elif key in rdictionairy and r_count < K_TO_WIN:
+                #     rdictionairy[key] += 1      
                 
           
     # Terminal winning conditions:
@@ -185,21 +230,29 @@ def evaluate(current_state, player):
     if rk > 0:
         return -10
 
+     # If no moves remain (draw)
+    if not get_valid_moves(current_state):
+        return 0
    
 
     #To determine which positions are statistically more likely to win, add weight to when there are more counters in the row/column/diagonal and less to when there less counters.
     #e.g If there are 3 y's, it is worth times 3, if there are 2y's it is worth *2. 
     #Add the value of the moves together to see how much the move is worth 
     #This is done for both the machine and user
-    ytotal = sum(int(key[1:]) * value for key, value in ydictionairy.items())
-    rtotal = sum(int(key[1:]) * value for key, value in rdictionairy.items())
+    
+    global ytotal
+    global rtotal
+   
+
+    # ytotal = sum(int(key[1:]) * value for key, value in ydictionairy.items())
+    # rtotal = sum(int(key[1:]) * value for key, value in rdictionairy.items())
 
     #The total worth of the move so far to determine how 'good the move' is. The total wroth of the y counters given there position is minuesed from the  value of the opposition as it is showing what the real value would be if the user played its best to make sure the machinne doesn't wine (i.e User is playing so the machine loses)
+    ytotal = sum(ydictionairy.values())
+    rtotal = sum(rdictionairy.values())
     return ytotal - rtotal  
 
-#  # If no moves remain (draw)
-#     if not get_valid_moves(current_state):
-#         return 0
+
                             
 def is_game_over(current_state, get_valid_moves, evaluate, player):
     """Checks if the game is over (win or draw)."""
@@ -244,16 +297,16 @@ def connect4_main():
             break
 
     if first_move_chooser == 1:
-        print("Computer (X) will make the first move.")
+        print("Computer Yellow (Y) will make the first move.")
         current_player = MAX_PLAYER
     else:
-        print("You (O) will make the first move.")
+        print("You Red (R) will make the first move.")
         current_player = MIN_PLAYER
 
     while True:
         print_state()
         if current_player == MAX_PLAYER:
-            print("Computer (MAX - X) is thinking...")
+            print("Computer (MAX - Y) is thinking...")
             start_time = time.time() #start the timer for decision
             best_move = find_best_move(state, depth, get_valid_moves, make_move, evaluate, current_player, MAX_PLAYER, MIN_PLAYER, is_game_over) #
             print(best_move)
@@ -267,9 +320,9 @@ def connect4_main():
             
             print(f"Computer move decision time: {end_time - start_time:.4f} seconds")
         else:
-            print("Your turn (MIN - O). Enter row and column (e.g., 0 0):")
+            print("Your turn (MIN  - R). Enter column (0-5):")
             best_move_user = find_best_move_user(state, depth, get_valid_moves, make_move, evaluate, current_player, MAX_PLAYER, MIN_PLAYER, is_game_over)
-            print("The best move for the user is: (row, column)", best_move_user)
+            print("The best move for the user is column", best_move_user[-1])
             while True:
                 try:
                     # row_input = input(f"Row (0-{5}): ")
@@ -291,9 +344,13 @@ def connect4_main():
             print_state()
             score = evaluate(state, current_player)
             if score == 10:
-                print("Computer (MAX - X) wins!")
+                print("Computer (MAX - Y) wins!")
+                print(yk)
+                print(ytotal)
+                print(rtotal)
+                
             elif score == -10:
-                print("You (MIN - O) win!")
+                print("You (MIN - R) win!")
             else:
                 print("It's a draw!")
             break
