@@ -1,6 +1,8 @@
 from minimax import *
 import time
 
+## 3, 2, 3, 4
+
 # 6 rows and 7 columns
 # 1. Game State Representation: 2D list
 state = [[' ' for _ in range(7)] for _ in range(6)]
@@ -33,32 +35,50 @@ def get_valid_moves(current_state):
 
     for i in range(6):  
         for j in range(7):
+            if current_state[i][j] == EMPTY_CELL:
+                valid_moves.append([i, j])
             
-            if (current_state[5][j] == EMPTY_CELL):
-                valid_moves.append([5, j])
+            # Check the bottom row of the board to see if any cells are sempty
+            # if (current_state[5][j] == EMPTY_CELL):
+            #     valid_moves.append([5, j])
 
             
-            elif i < 5 and  (current_state[i][j] == EMPTY_CELL and current_state[i + 1][j] != EMPTY_CELL):
-                valid_moves.append([i, j])
+            # elif i < 5 and  (current_state[i][j] == EMPTY_CELL and current_state[i + 1][j] != EMPTY_CELL):
+            #     valid_moves.append([i, j])
     return valid_moves
 
 def is_valid_move(current_state, row, col):
     """Checks if a move (row, col) is valid in the current state."""
-    
-    if row == 5 and current_state[row][col] == EMPTY_CELL:
-        return True
-    
-    elif row < 5 and  (0 <= row < 6 and 0 <= col < 7 and current_state[row][col] == EMPTY_CELL  and current_state[row + 1][col] != EMPTY_CELL):
-        return True
-    
+
+    if row == -1:
+        for current_row in range(len(current_state)-1, -1, -1):
+            if current_state[current_row][col] == EMPTY_CELL:
+                return True
+        
+        return False 
     else:
-        return False
+        if row == 5 and current_state[row][col] == EMPTY_CELL:
+            return True
+
+        elif row < 5 and  (0 <= row < 6 and 0 <= col < 7 and current_state[row][col] == EMPTY_CELL  and current_state[row + 1][col] != EMPTY_CELL):
+            return True
+
+        else:
+            return False
     
 
 def make_move(current_state, row, col, player):
     """Makes a move on the state if it is valid."""
+
     if is_valid_move(current_state, row, col):
-        current_state[row][col] = player
+        if row == -1:
+            for current_row in range(len(current_state)-1, -1, -1):
+                if current_state[current_row][col] == EMPTY_CELL:
+                    current_state[current_row][col] = player
+                    break
+        else:
+            # print(row, col)
+            current_state[row][col] = player
 
     return current_state
 
@@ -220,6 +240,7 @@ def connect4_main():
             print("Computer (MAX - X) is thinking...")
             start_time = time.time() #start the timer for decision
             best_move = find_best_move(state, depth, get_valid_moves, make_move, evaluate, current_player, MAX_PLAYER, MIN_PLAYER, is_game_over) #
+            print(best_move)
             end_time = time.time() # end the timer
             make_move(state, best_move[0], best_move[1], MAX_PLAYER)
             current_player = MIN_PLAYER
@@ -235,11 +256,11 @@ def connect4_main():
             print("The best move for the user is: (row, column)", best_move_user)
             while True:
                 try:
-                    row_input = input(f"Row (0-{5}): ")
+                    # row_input = input(f"Row (0-{5}): ")
                     col_input = input(f"Column (0-{6}): ")
-                    row = int(row_input)
+                    # row = int(row_input)
                     col = int(col_input)
-                    if is_valid_move(state, row, col):
+                    if is_valid_move(state, -1, col):
                         break
                     else:
                         print("Invalid move. Cell is not empty or out of bounds. Try again:")
@@ -247,7 +268,7 @@ def connect4_main():
                     print("Invalid input format. Enter row and column as numbers (e.g., 0 0). Try again:")
                     
 
-            make_move(state, row, col, MIN_PLAYER)
+            make_move(state, -1, col, MIN_PLAYER)
             current_player = MAX_PLAYER
 
         if is_game_over(state, get_valid_moves, evaluate, current_player):
