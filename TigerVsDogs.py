@@ -354,7 +354,7 @@ def Tiger_vs_Dogs_main():
     current_player = 'T' # Tiger always starts first
     get_valid_moves_with_player = partial(get_valid_moves, player=ai_player)
     
-    depth = 1
+    depth = 3
     while True:
         try:
             depth_input = int(input("Enter the difficulty level (depth for minimax, higher means harder, e.g., 3): "))
@@ -362,8 +362,8 @@ def Tiger_vs_Dogs_main():
                 depth = depth_input
                 break
         except ValueError:
-            print("Invalid input. Please enter an integer depth. Using default depth 1.")
-            depth = 1
+            print("Invalid input. Please enter an integer depth. Using default depth 3.")
+            depth = 3
             break
     print(f"Difficulty level set to depth: {depth}")
 

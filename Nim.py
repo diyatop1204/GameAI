@@ -84,21 +84,24 @@ def Nim_main():
     num_sticks = 0
     current_player = MAX_PLAYER  # MAX starts first
 
-    print("Welcome to Nim vs Computer (Minimax with Alpha-Beta Pruning)! ")
+    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+    print("Welcome to Nim vs Computer (Minimax with Alpha-Beta Pruning)!")
+    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n")
     depth = 3  # Default depth
 
     #Note: Get number of rows of sticks
     try:
-        num_rows = int(input("Enter the number of rows of sticks "))
+        num_rows = int(input("Enter the number of rows (of sticks): "))
 
     except ValueError:
         print("Invalid input, defaulting to 4 rows.")
         num_rows = 4
 
+    print()
     #Note: Get number of sticks in a row
     for i in range(num_rows):
         try:
-            num_sticks = int(input(f"Enter the number of sticks in row {i}  "))
+            num_sticks = int(input(f"Enter the number of sticks in Row {i}: "))
             state.append(num_sticks)
 
         except ValueError:
@@ -110,8 +113,8 @@ def Nim_main():
 
     while True:
         try:
-            depth_input = input("Enter the difficulty level (depth for minimax, higher means harder, e.g., 3): ")
-            depth = int(depth_input)
+            depth_input = int(input("\nEnter the difficulty level (depth for minimax, higher means harder, e.g., 3): "))
+            depth = depth_input
             if depth < 1:
                 print("Depth should be at least 1. Using default depth 3.")
                 depth = 3
@@ -125,7 +128,7 @@ def Nim_main():
     first_move_chooser = 1  # Default computer first
     while True:
         try:
-            first_move_input = input("Who should make the first move? (1 - Computer, 2 - You ): ")
+            first_move_input = input("\nComputer : 1,\nYou: 2?\n Who should make the first move? (1 or 2): ")
             first_move_chooser = int(first_move_input)
             if first_move_chooser not in [1, 2]:
                 print("Invalid choice. Please enter 1 or 2. Computer will go first by default.")
@@ -137,16 +140,16 @@ def Nim_main():
             break
 
     if first_move_chooser == 1:
-        print("Computer  will make the first move.")
+        print("\nComputer will make the first move.")
         current_player = MAX_PLAYER
     else:
-        print("You will make the first move.")
+        print("\nYou will make the first move.")
         current_player = MIN_PLAYER
 
     while True:
         print_state()
         if current_player == MAX_PLAYER:
-            print("Computer is thinking...")
+            print("\nComputer is thinking...")
             nim_start_time = time.time() #start the timer for decision time
             best_move = find_best_move(state, depth, get_valid_moves, make_move, evaluate, current_player, MAX_PLAYER, MIN_PLAYER, is_game_over) 
             nim_end_time = time.time() # end the timer
@@ -157,19 +160,19 @@ def Nim_main():
             nim_move_time = nim_end_time - nim_start_time
             nim_move_times.append(nim_move_time)
         else:
-            print("Your turn")
+            print("\nYour turn!")
             while True:
                 try:
-                    row_input = input(f"Enter row to remove stick (Row 0 (Top) - Row {num_rows-1} (Bottom)): ")
+                    row_input = input(f"\nEnter row to remove stick (Row 0 (Top) - Row {num_rows-1} (Bottom)): ")
                     stick_input = input("How many sticks to remove? ")
                     row = int(row_input)
                     k = int(stick_input)
                     if is_valid_move(state, row, k):
                         break
                     else:
-                        print("Invalid move. There are no sticks in this row. Try again ")
+                        print("Invalid move. There are no sticks in this row. Try again")
                 except ValueError:
-                    print(f"Invalid format. Enter row to remove stick (Row 0 (Top) - Row {num_rows-1} Selected (Bottom)) and how many sticks to remove: ")
+                    print(f"Invalid format. Enter row to remove stick (Row 0 (Top) - Row {num_rows-1} Selected (Bottom)) and how many sticks to remove")
 
             state = make_move(state, row, k, MIN_PLAYER) #Remakes the state as chips have been removed
             
@@ -179,9 +182,9 @@ def Nim_main():
             print_state()
             # The player who takes the last stick loses.
             if current_player == MAX_PLAYER:
-                print("\nNo sticks left. You lose")
+                print("\nNo sticks left. You lose :(\n")
             else:
-                print("\nNo sticks left. You win")
+                print("\nNo sticks left. You win!\n")
             break
         #Printing out the Move time summary
         if nim_move_times:

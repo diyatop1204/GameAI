@@ -57,7 +57,6 @@ def make_move(current_state, row, k, player):
 
 
 # 3. Winning Function - Checks which player has won at the terminal end of a game tree branch.
-
 def winner(current_state, player):
     if all(row == 0 for row in current_state):
         # print(player)
@@ -77,21 +76,24 @@ def Nim_main():
     initialize_state()
     current_player = MAX_PLAYER  # MAX starts first
 
-    print("Welcome to Nim vs Computer Complete Tree Search ")
+    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+    print("Welcome to Nim vs Computer (Complete Tree Search)")
+    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n")
    
     #Note: Get number of rows of sticks
     try:
-        num_rows = int(input("Enter the number of rows of sticks "))
+        num_rows = int(input("Enter the number of rows (of sticks): "))
     except ValueError:
         print("Invalid input, defaulting to 4 rows.")
         num_rows = 4
     #state = [2 * i + 1 for i in range(num_rows)]
 
 
+    print()
       #Note: Get number of sticks in each row
     for i in range(num_rows):  
         try:
-            num_sticks = int(input(f" Enter the number of stick in row: {i}"))
+            num_sticks = int(input(f"Enter the number of sticks in Row {i}: "))
             state.append(num_sticks)
         except ValueError:
             print("Invalid input, defaulting to increments of 2 for each row.")
@@ -101,7 +103,7 @@ def Nim_main():
     first_move_chooser = 1  # Default computer first
     while True:
         try:
-            first_move_input = input("Who should make the first move? (1 - Computer, 2 - You ): ")
+            first_move_input = input("\nComputer : 1,\nYou: 2?\n Who should make the first move? (1 or 2): ")
             first_move_chooser = int(first_move_input)
             if first_move_chooser not in [1, 2]:
                 print("Invalid choice. Please enter 1 or 2. Computer will go first by default.")
@@ -113,16 +115,16 @@ def Nim_main():
             break
 
     if first_move_chooser == 1:
-        print("Computer  will make the first move.")
+        print("\nComputer  will make the first move.")
         current_player = MAX_PLAYER
     else:
-        print("You will make the first move.")
+        print("\nYou will make the first move.")
         current_player = MIN_PLAYER
 
     while True:
         print_state()
         if current_player == MAX_PLAYER:
-            print("Computer  is thinking...")
+            print("\nComputer is thinking...")
             nim_start_time = time.time() #start the timer for decision time
             best_move = find_best_move(state, get_valid_moves, make_move, MAX_PLAYER, MIN_PLAYER, is_game_over, winner, current_player) 
             nim_end_time = time.time() # end the timer
@@ -133,12 +135,12 @@ def Nim_main():
             nim_move_time = nim_end_time - nim_start_time
             nim_move_times.append(nim_move_time)
         else:
-            print("Your turn")
+            print("\nYour turn!")
             best_move_user = find_best_move_user(state, get_valid_moves, make_move,  MAX_PLAYER, MIN_PLAYER, is_game_over, winner, current_player)
             print("The best move for the user is: (row to remove, how many sticks to remove)", best_move_user)
             while True:
                 try:
-                    row_input = input(f"Enter row to remove stick (0 (Top) - {num_rows} Selected(Bottom)): ")
+                    row_input = input(f"\nEnter row to remove stick (Row 0 (Top) - Row {num_rows-1} (Bottom)): ")
                     stick_input = input("How many sticks to remove? ")
                     row = int(row_input)
                     k = int(stick_input)
@@ -160,9 +162,9 @@ def Nim_main():
             print_state()
             # The player who takes the last stick loses.
             if current_player == MAX_PLAYER:
-                print("\nNo sticks left. You lose")
+                print("\nNo sticks left. You lose :(\n")
             else:
-                print("\nNo sticks left. You win")
+                print("\nNo sticks left. You win!\n")
             break
         
         #Printing out the Move time summary

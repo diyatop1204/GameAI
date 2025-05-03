@@ -17,6 +17,7 @@ state_counter = 0  # Initialize state counter
 
 def print_state():
     """Prints the current game state (board) to the console."""
+    print()
     print("----"*BOARD_SIZE)
     for i in range(BOARD_SIZE):
         print("| ", end="")
@@ -92,7 +93,9 @@ def is_game_over(current_state, get_valid_moves, winner, player):
 def TicTacToe_main():
     global BOARD_SIZE, K_TO_WIN, state
     current_player = MAX_PLAYER  # MAX starts first
-    print("Welcome to Tic-Tac-Toe vs Computer Complete Tree Search! ")
+    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+    print("Welcome to Tic-Tac-Toe vs Computer (Complete Tree Search)! ")
+    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n")
     while True:
         try:
             board_size_input = input("Enter board size (e.g., 3 for 3x3): ")
@@ -110,7 +113,7 @@ def TicTacToe_main():
         first_move_chooser = 1  # Default computer first
     
         try:
-            first_move_input = input("Who should make the first move? (1 - Computer (X), 2 - You (O)): ")
+            first_move_input = input("Computer (X): 1,\nYou(O): 2?\n Who should make the first move? (1 or 2): ")
             first_move_chooser = int(first_move_input)
             if first_move_chooser not in [1, 2]:
                 print("Invalid choice. Please enter 1 or 2. Computer (X) will go first by default.")
@@ -144,7 +147,7 @@ def TicTacToe_main():
             
             print(f"Computer move decision time: {end_time - start_time:.4f} seconds")
         else:
-            print("Your turn (MIN - O). Enter row and column (e.g., 0 0):")
+            print("Your turn (MIN - O). Enter row and column below (e.g., Row 0, Column 0)")
             best_move_user = find_best_move_user(state, get_valid_moves, make_move,  MAX_PLAYER, MIN_PLAYER, is_game_over, winner, current_player)
             print("The best move for the user is: (row, column)", best_move_user)
             while True:
@@ -156,21 +159,21 @@ def TicTacToe_main():
                     if is_valid_move(state, row, col):
                         break
                     else:
-                        print("Invalid move. Cell is not empty or out of bounds. Try again:")
+                        print("Invalid move. Cell is not empty or out of bounds. Try again")
                 except ValueError:
-                    print("Invalid input format. Enter row and column as numbers (e.g., 0 0). Try again:")
+                    print("Invalid input format. Enter row and column as numbers (e.g., 0 0). Try again")
 
             make_move(state, row, col, MIN_PLAYER)
             current_player = MAX_PLAYER
             
         if is_game_over(state, get_valid_moves, winner, current_player): 
             print_state(), 
-            if winner(state, current_player) == 1: #Checks if MAX  has won.
-                print("Computer (MAX - X) wins!")
-            elif winner(state, current_player) == -1: #Checks if Min has won.
-                print("You (MIN - O) win!")
+            if winner(state, current_player) == 1: #Checks if MAX has won.
+                print("\nComputer (MAX - X) wins!\n")
+            elif winner(state, current_player) == -1: #Checks if MIN has won.
+                print("\nYou (MIN - O) win!\n")
             else:
-                print("It's a draw!")
+                print("\nIt's a draw!\n")
             break
         if move_times:
             average_time = sum(move_times) / len(move_times)
@@ -178,5 +181,5 @@ def TicTacToe_main():
             print(f"Total moves made by computer: {len(move_times)}")
             print(f"Average move time: {average_time:.4f} seconds")
             print(f"Maximum move time: {max(move_times):.4f} seconds")
-            print(f"Minimum move time: {min(move_times):.4f} seconds")
+            print(f"Minimum move time: {min(move_times):.4f} seconds\n")
 
