@@ -157,15 +157,8 @@ def winner(current_state, player):
             return -10
         
         return 0
-  
-   
-
- 
-   
 
 
-
-                            
 def is_game_over(current_state, get_valid_moves, winner, player):
     """Checks if the game is over (win or draw)."""
     return not get_valid_moves(current_state) or abs(winner(current_state, player)) == 10
@@ -174,33 +167,32 @@ def connect4_main():
     global K_TO_WIN, state
     current_player = MAX_PLAYER  # MAX starts first
 
-    print("Welcome to Connect 4 vs Computer (Complete Tree Search)! ")
-   
-      
+    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+    print("Welcome to Connect 4 vs Computer (Complete Tree Search)!")
+    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n")
 
     K_TO_WIN = 4
     state = [[' ' for _ in range(7)] for _ in range(6)]
 
-
     first_move_chooser = 1  # Default computer first
     while True:
         try:
-            first_move_input = input("Who should make the first move? (1 - Computer (X), 2 - You (O)): ")
+            first_move_input = input("Computer (Y): 1,\nYou (R): 2?\n Who should make the first move? (1 or 2): ")
             first_move_chooser = int(first_move_input)
             if first_move_chooser not in [1, 2]:
-                print("Invalid choice. Please enter 1 or 2. Computer (X) will go first by default.")
+                print("Invalid choice. Please enter 1 or 2. Computer (Y) will go first by default.")
                 first_move_chooser = 1
             break
         except ValueError:
-            print("Invalid input. Please enter 1 or 2. Computer (X) will go first by default.")
+            print("Invalid input. Please enter 1 or 2. Computer (Y) will go first by default.")
             first_move_chooser = 1
             break
 
     if first_move_chooser == 1:
-        print("Computer Yellow (Y) will make the first move.")
+        print("Computer, Yellow (Y) will make the first move.")
         current_player = MAX_PLAYER
     else:
-        print("You Red (R) will make the first move.")
+        print("You, Red (R) will make the first move.")
         current_player = MIN_PLAYER
 
     while True:
@@ -220,21 +212,18 @@ def connect4_main():
             
             print(f"Computer move decision time: {end_time - start_time:.4f} seconds")
         else:
-            print("Your turn (MIN  - R). Enter column (0-5):")
+            print("Your turn (MIN  - R). Enter column (0-6): ")
             best_move_user = find_best_move_user(state, get_valid_moves, make_move,  MAX_PLAYER, MIN_PLAYER, is_game_over, winner, current_player,)
             print("The best move for the user is column", best_move_user[-1])
             while True:
                 try:
-                    # row_input = input(f"Row (0-{5}): ")
-                    col_input = input(f"Column (0-{6}): ")
-                    # row = int(row_input)
-                    col = int(col_input)
+                    col = int(input("Column (0-6): "))
                     if is_valid_move(state, -1, col):
                         break
                     else:
-                        print("Invalid move. Cell is not empty or out of bounds. Try again:")
+                        print("Invalid move. Cell is not empty or out of bounds. Try again")
                 except ValueError:
-                    print("Invalid input format. Enter row and column as numbers (e.g., 0 0). Try again:")
+                    print("Invalid input format. Enter row and column as numbers (e.g., 0 0). Try again")
                     
 
             make_move(state, -1, col, MIN_PLAYER)
@@ -244,14 +233,14 @@ def connect4_main():
             print_state()
             score = winner(state, current_player)
             if score == 10:
-                print("Computer (MAX - Y) wins!")
+                print("\nComputer (MAX - Y) wins!\n")
                 print(yk)
               
                 
             elif score == -10:
-                print("You (MIN - R) win!")
+                print("\nYou (MIN - R) win!\n")
             else:
-                print("It's a draw!")
+                print("\nIt's a draw!\n")
             break
         if move_times:
             average_time = sum(move_times) / len(move_times)

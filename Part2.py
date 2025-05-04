@@ -19,7 +19,7 @@ if __name__ == "__main__":
                 game = 1
             break
         except ValueError:
-            print("Invalid input. Please enter an integer game code option. Defaulting to Tic Tac Toe.")
+            print("Invalid Input. Please enter an integer game code option. Defaulting to Tic Tac Toe.")
             game = 1
             break
 
@@ -41,7 +41,7 @@ if __name__ == "__main__":
                     ttt.TicTacToe_main()
                     break           
             except ValueError:
-                print("Invalid input, Defaulting to Alpha Beta Pruning algorithm.\n")
+                print("Invalid Input, Defaulting to Alpha Beta Pruning algorithm.\n")
                 algorithm = 2
                 break
 
@@ -63,7 +63,7 @@ if __name__ == "__main__":
                     ttt.TicTacToe_main()
                     break           
             except ValueError:
-                print("Invalid input, Defaulting to Alpha Beta Pruning algorithm.\n")
+                print("Invalid Input, Defaulting to Alpha Beta Pruning algorithm.\n")
                 algorithm = 2
                 break
  
@@ -85,7 +85,7 @@ if __name__ == "__main__":
                     Td.Tiger_vs_Dogs_main()
                     break           
             except ValueError:
-                print("Invalid input, Defaulting to Alpha Beta Pruning algorithm.\n")
+                print("Invalid Input, Defaulting to Alpha Beta Pruning algorithm.\n")
                 algorithm = 2
                 break
 
@@ -94,21 +94,20 @@ if __name__ == "__main__":
         print(f"Setting up Connect 4")
         while True:
             try:
-                algorithim_input = input("Would you like to play with complete tree search = 1  or with Alpha Beta Pruning = 2? ")
-                algorithim = int(algorithim_input)
-                if algorithim == 1:
-                    print(f"Starting Connect 4 with Complete Tree Search")
+                algorithm = int(input("Would you like to play with: \n Complete Tree Search: 1 or \n Alpha Beta Pruning = 2?\n\nEnter Algorithm Number: "))
+                if algorithm == 1:
+                    print(f"Starting Connect 4 with Complete Tree Search...\n")
                     c4c.connect4_main()
                     break
-                elif algorithim == 2:                    
-                    print(f"Starting Connect 4 with Alpha Beta Pruning")
+                elif algorithm == 2:                    
+                    print(f"Starting Connect 4 with Alpha Beta Pruning...\n")
                     c4.connect4_main()
                     break
                 else:
-                    print("Invalid Selection Defaulting to Alpha Beta Pruning algorithim")
+                    print("Invalid Selection Defaulting to Alpha Beta Pruning algorithm\n")
                     c4.connect4_main()
                     break           
             except ValueError:
-                print("Invalid input, Defaulting to Alpha Beta Pruning algorithim")
+                print("Invalid Input, Defaulting to Alpha Beta Pruning algorithm\n")
                 algorithim = 1
                 break              

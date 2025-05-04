@@ -242,6 +242,10 @@ def Tiger_vs_Dogs_Complete_main():
     state = game_board()
     print_state(state)
 
+    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+    print("Welcome to Tiger vs Dogs (Complete Tree Search)!")
+    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n")
+
     user_choice = ''
     while user_choice not in ['T', 'D']:
         user_choice = input("Do you want to play as the Tiger (T) or the Dogs (D)? ").strip().upper()

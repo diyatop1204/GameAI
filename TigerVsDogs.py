@@ -345,6 +345,10 @@ def Tiger_vs_Dogs_main():
     game_board()  # Set up the initial board
     print_state()
 
+    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+    print("Welcome to Tiger vs Dogs (Minimax with Alpha-Beta Pruning)!")
+    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n")
+
     user_choice = ''
     while user_choice not in ['T', 'D']:
         user_choice = input("Do you want to play as the Tiger (T) or the Dogs (D)? ").strip().upper()
