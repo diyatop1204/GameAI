@@ -4,6 +4,7 @@ import Nim as Nim
 import NimComplete as NimC
 import TigerVsDogs as Td
 import connect4 as c4
+import connect4complete as c4c
 import TigerVsDogsComplete as TdC
 
 # Basic Game Loop
@@ -88,13 +89,26 @@ if __name__ == "__main__":
                 algorithm = 2
                 break
 
-    if game == 4: 
-        print("Setting Up Connect 4")
-        while True: 
+  
+    if game == 4:  
+        print(f"Setting up Connect 4")
+        while True:
             try:
-                print("\nStarting Connect 4 with Alpha Beta Pruning\n")
-                c4.connect4_main()
-                break
-            except Exception as e:
-                print(f"There was an error: {e}")
-                break        
+                algorithim_input = input("Would you like to play with complete tree search = 1  or with Alpha Beta Pruning = 2? ")
+                algorithim = int(algorithim_input)
+                if algorithim == 1:
+                    print(f"Starting Connect 4 with Complete Tree Search")
+                    c4c.connect4_main()
+                    break
+                elif algorithim == 2:                    
+                    print(f"Starting Connect 4 with Alpha Beta Pruning")
+                    c4.connect4_main()
+                    break
+                else:
+                    print("Invalid Selection Defaulting to Alpha Beta Pruning algorithim")
+                    c4.connect4_main()
+                    break           
+            except ValueError:
+                print("Invalid input, Defaulting to Alpha Beta Pruning algorithim")
+                algorithim = 1
+                break              
