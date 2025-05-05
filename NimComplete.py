@@ -15,7 +15,6 @@ def initialize_state():
     global state
     num_rows = 4
     state = []
-    #state = [2 * i + 1 for i in range(num_rows)]
 
 def print_state():
     max_length = max(state) 
@@ -86,7 +85,6 @@ def Nim_main():
     except ValueError:
         print("Invalid input, defaulting to 4 rows.")
         num_rows = 4
-    #state = [2 * i + 1 for i in range(num_rows)]
 
 
     print()

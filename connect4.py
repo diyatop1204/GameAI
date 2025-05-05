@@ -34,15 +34,7 @@ def get_valid_moves(current_state):
     
 
     # getting the coordinate values through the indexes and gets the sublists from the board
-    # for row_index, current_row in enumerate(current_state):
-    #     for column_index, current_column in current_row:
-
-
-
-    #         if current_column != EMPTY_CELL: # Checks if the cell is not empty, otherwise go to elif
-    #             continue
-    #         elif row_index != 5 and current_state[row_index + 1][column_index] != EMPTY_CELL: # If this is True then the current coordinate is a valid spot
-    #             valid_moves.append([ row_index, column_index])
+   
     for i in range(6):  
         for j in range(7):
             # if current_state[i][j] == EMPTY_CELL:
@@ -187,15 +179,6 @@ def evaluate(current_state, player):
                     rdictionairy[key] += 1 
                     rdictionairy[key] *= r_count    
             
-            
-            # if  y_count < K_TO_WIN and r_count == 0:
-            #     key = f'y{y_count}'
-            #     if key in ydictionairy:
-            #         ydictionairy[key] += 1 * y_count
-            # elif y_count == K_TO_WIN and r_count == 0:
-            #     yk += 1          
-                        
-
         
                             
                 #If the amount of o counters are equiivalent to how many are needed to win for the user which is dependent on the board size
@@ -203,25 +186,7 @@ def evaluate(current_state, player):
             #If any amounts of o counters are in the row, -1 to its value. (e.g If there are 3 o's,  +1 value will be added, 2o's - + 1 value will be added/assigned)
             
             
-            # if  r_count < K_TO_WIN and y_count == 0:
-            #     key = f'r{r_count}'
-            #     if key in rdictionairy:
-            #         rdictionairy[key] += 1 * r_count
-            # elif r_count == K_TO_WIN and y_count == 0:
-            #     rk += 1  
-                
-                # if r_count == K_TO_WIN:
-                #     rk += 1  
-                # elif  r_count < K_TO_WIN:
-                #     key = f'r{r_count}'
-                #     if key in rdictionairy:
-                #         rdictionairy[key] += 1
-                
-                # key = f'r{r_count}'
-                # if r_count == K_TO_WIN:
-                #     rk += 1
-                # elif key in rdictionairy and r_count < K_TO_WIN:
-                #     rdictionairy[key] += 1      
+  
                 
           
     # Terminal winning conditions:

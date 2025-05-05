@@ -47,7 +47,7 @@ def make_move(current_state, row, k, player):
         return current_state
     new_state = copy.deepcopy(current_state)
 
-    # Remove the first k chips from new_state[row]
+    # Remove the sticsk
     new_state[row] = new_state[row] - k
     return new_state
  
@@ -174,7 +174,7 @@ def Nim_main():
                 except ValueError:
                     print(f"Invalid format. Enter row to remove stick (Row 0 (Top) - Row {num_rows-1} Selected (Bottom)) and how many sticks to remove")
 
-            state = make_move(state, row, k, MIN_PLAYER) #Remakes the state as chips have been removed
+            state = make_move(state, row, k, MIN_PLAYER) #Remakes the state as sticks removed
             
             current_player = MAX_PLAYER
 
