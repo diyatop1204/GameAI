@@ -163,6 +163,8 @@ def Nim_main():
             print("\nYour turn!")
             while True:
                 try:
+                    best_move_user = find_best_move_user(state, depth, get_valid_moves, make_move, evaluate, current_player, MAX_PLAYER, MIN_PLAYER, is_game_over)
+                    print("The best move for the user is: (row, sticks)", best_move_user)
                     row_input = input(f"\nEnter row to remove stick (Row 0 (Top) - Row {num_rows-1} (Bottom)): ")
                     stick_input = input("How many sticks to remove? ")
                     row = int(row_input)
